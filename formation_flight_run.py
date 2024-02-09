@@ -8,11 +8,12 @@ Script to run formation flight data collection
 
 import numpy as np
 import pandas as pd
+import os
 
-import time
 import wt_formation_flight_env as form_flight_env
 
 def run():
+    os.chdir('C:/Users/coe-windtunnel/.spyder-py3/formation_flight')
     freq = 1000
     num = 5000
     
@@ -42,7 +43,7 @@ def run():
     f_dir = t_o_t+'/'
     
     print('Proceeding with new',t_o_t,',saved under: ',f_dir+filename+'.csv')
-    env = form_flight_env(freq, num, filename, f_dir)
+    env = form_flight_env.ff_env(freq, num, filename, f_dir)
     _ = env.get_data()
     
     
