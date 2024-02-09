@@ -59,7 +59,7 @@ class ff_env():
         self.tap_cols = ['tap0','tap1','tap2','tap3','tap4','tap5','tap6',
                          'tap7','tap8','tap9','tap10','tap11','tap12',
                          'tap13','tap14','tap15','tap16','tap17','tap18','tap19']
-        self.pitot_cols = ['static','total']
+        self.pitot_cols = ['dyn_press']
         self.force_cols = ['f0','f1','f2','f3','f4','f5']
         
         self.num_steps = num
