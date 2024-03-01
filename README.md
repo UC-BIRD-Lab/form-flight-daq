@@ -6,3 +6,6 @@ This repo includes two python scripts, one containing the daqmx class, the other
 
 ## Purpose
 Used for collecting and saving pressure tap, force sensor, and pitot tube data during formation flight experiments. 
+
+## Reference data
+Box folder containing the MATLAB files for previous wind tunnel operation: https://ucdavis.box.com/s/df16xfmk344mtkfgysrjifpcb65wsea8
