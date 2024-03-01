@@ -80,11 +80,13 @@ def output_calibration_information(runname, atm_pressure, atm_temp, chord, env, 
     dym_vis = calc_dynamic_viscosity(atm_temp)
 
     print('press "q" to stop calibration loop')
+    print('Airspeed(mph):           Reynolds Number:')
+    print()
     while calibrate == True:
         # read live voltage information from pitot channel - verify this works how we expect it to...
         live_pressure = pressure_from_voltage(env.get_pitot_voltage())
 
-        # subtract live pressure from tare pressure to get reall pressure measurement
+        # subtract live pressure from tare pressure to get real pressure measurement
         live_calibrated_pressure = live_pressure - tare_pressure
         airspeed = airspeed_from_pressure(
             live_calibrated_pressure, air_density)
@@ -93,7 +95,8 @@ def output_calibration_information(runname, atm_pressure, atm_temp, chord, env, 
 
         # display reynolds number until key is pressed
         if not math.isnan(re):
-            print(f"{round(airspeed,2)}        {round(re)}", end='\n')
+            #print(round(airspeed*2.23694,2),        round(re), end='\r')
+            print(f"{round(airspeed*2.23694, 2)}        {round(re)}", end='\n')
 
         if keyboard.is_pressed("q"):
             # Key was pressed
@@ -106,9 +109,9 @@ def output_calibration_information(runname, atm_pressure, atm_temp, chord, env, 
 
 
 def run():
-    os.chdir('C:/Users/coe-windtunnel/.spyder-py3/formation_flight')
-    freq = 10
-    num = 50  # 5000
+    os.chdir('C:/Users/coe-windtunnel/projects/form-flight-daq')
+    freq = 1000
+    num = 5000  # 5000
 
     is_tare = input("Is this a tare? (Y/N): ")
     atm_pressure = float(input("Atmospheric pressure in in.HG for test day?"))

@@ -92,10 +92,10 @@ class ff_env():
         V_j = np.sqrt(2*(dynamic_pressure)/(rho*K_constant)) #velocity at station J (where model mounts in test section)
         return V_j
         
-    def output_velocity_stream(self):
-        velocity = self.airspeed_from_pressure(
-            self.press_taps
-            )
+    # def output_velocity_stream(self):
+    #     velocity = self.airspeed_from_pressure(
+    #         self.press_taps
+    #         )
 
     def record_data(self, fdir='Test/', filename='Test'):
         # acquire and store in read_array
@@ -106,7 +106,7 @@ class ff_env():
    
         self.force_reader.read_many_sample(
             self.force_read_array,
-            number_of_samples_per_channel=self.num_samp,
+            number_of_samples_per_channel=self.num_samp
             )
             
         taps_df = pd.DataFrame(self.press_read_array.T, columns=self.tap_cols)
