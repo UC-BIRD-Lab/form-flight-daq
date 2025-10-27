@@ -10,7 +10,6 @@ Used for collecting and saving pressure tap, force sensor, and pitot tube data d
 ## Reference data
 Box folder containing the MATLAB files for previous wind tunnel operation: https://ucdavis.box.com/s/df16xfmk344mtkfgysrjifpcb65wsea8
 
-
 ## Folder: Wind Tunnel Test Run Code
 This folder contains scripts for collecting wind tunnel measurement data.
 **Inputs:**  
@@ -19,7 +18,24 @@ This folder contains scripts for collecting wind tunnel measurement data.
 3. Ambient environmental conditions specified in `Testing_Day_Condition`
 
 **Output:**  
-A `Raw_Data` folder containing all measured force and pressure data.
+A `Raw_Data` folder containing all measured force and pressure data. Avaliable at XXX figshare
+
+## Folder: Raw Data folder
+To make the code running, you need to download the `Raw_Data` from XXX to this working directory.
 
 ## Script: Converter
-1. The `Converter_pressure_tap.py` script processes all pressure data files. It converts the raw data into calibrated pressure values, subtracts the tare value from each test measurement, and saves the results in a new folder named `Tared`.
+**Tare definition:** *“Tare” is measured with the model powered on and the wind tunnel turned off.*
+1. **`Converter_pressure_tap.py`**  
+   - Converts raw pressure-tap voltages to calibrated pressures.  
+   - Subtracts the corresponding tare (per channel) from each test measurement.  
+   - Writes the processed files to a `Post_Data/.../Tared` folder (mirroring the raw folder structure).
+
+2. **`Converter_load_cell.py`**  
+   - Converts raw 6-axis load-cell voltages to calibrated forces and moments.  
+   - Subtracts the corresponding tare (per axis) from each test measurement.  
+   - Writes the processed files to a `Post_Data/.../Tared` folder (mirroring the raw folder structure).
+
+**Notes**
+- Both scripts also save intermediate “Test” and “Bias/Tare” outputs in `Post_Data/.../Test` and `Post_Data/.../Bias` for traceability.  
+- Folder structure and filenames are preserved so runs can be cross-referenced with raw data.
+

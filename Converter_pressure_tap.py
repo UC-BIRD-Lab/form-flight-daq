@@ -178,12 +178,14 @@ def process_pressure_taps_automated():
         
         # Tare file
         tare_pressure_filename = f'Taps_Y_Nah_Z_Nah_Re_{Re}_tare_AoA_{AoA}_Iter_{Iter}.csv'
-        tare_pressure_full_path = f'Raw_data/{type_of_run}/X_{xpos}/Iter_{Iter}_{Test_date}/Tare/Taps/AoA_{AoA}/{tare_pressure_filename}'
+        tare_pressure_full_path = f'Raw_Data/{type_of_run}/X_{xpos}/Iter_{Iter}_{Test_date}/Tare/Taps/AoA_{AoA}/{tare_pressure_filename}'
         
         # Test folder
-        test_pressure_folder_path = f'Raw_data/{type_of_run}/X_{xpos}/Iter_{Iter}_{Test_date}/Test/Taps/AoA_{AoA}'
+        test_pressure_folder_path = f'Raw_Data/{type_of_run}/X_{xpos}/Iter_{Iter}_{Test_date}/Test/Taps/AoA_{AoA}'
+
         file_count = len([f for f in os.listdir(test_pressure_folder_path) if f.endswith('.csv')])
         print(f'Processing {file_count} files for {type_of_run} - AoA_{AoA} - Iter_{Iter}')
+        
         # Post-processed folders
         post_pressure_bias_folder = f'Post_Data/{type_of_run}/Bias/Taps/X_{xpos}/Iter_{Iter}_{Test_date}/AoA_{AoA}/'
         post_pressure_test_folder = f'Post_Data/{type_of_run}/Test/Taps/X_{xpos}/Iter_{Iter}_{Test_date}/AoA_{AoA}/'
@@ -222,10 +224,10 @@ def process_pressure_taps_automated():
                 
                 # Tare file
                 tare_pressure_filename = f'Taps_Y_Nah_Z_Nah_Re_{Re}_tare_AoA_{AoA}_Iter_{Iter}.csv'
-                tare_pressure_full_path = f'Raw_data/{type_of_run}/X_{xpos}/Iter_{Iter}_{Test_date}/Tare/Taps/AoA_{AoA}/{tare_pressure_filename}'
+                tare_pressure_full_path = f'Raw_Data/{type_of_run}/X_{xpos}/Iter_{Iter}_{Test_date}/Tare/Taps/AoA_{AoA}/{tare_pressure_filename}'
                 
                 # Test folder
-                test_pressure_folder_path = f'Raw_data/{type_of_run}/X_{xpos}/Iter_{Iter}_{Test_date}/Test/Taps/AoA_{AoA}'
+                test_pressure_folder_path = f'Raw_Data/{type_of_run}/X_{xpos}/Iter_{Iter}_{Test_date}/Test/Taps/AoA_{AoA}'
 
                 # Post-processed folders
                 post_pressure_bias_folder = f'Post_Data/{type_of_run}/Bias/Taps/X_{xpos}/Iter_{Iter}_{Test_date}/AoA_{AoA}/'
