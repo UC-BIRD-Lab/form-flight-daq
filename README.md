@@ -56,6 +56,11 @@ These scripts compute **true error and statistics** from **time-series** data fo
    - Produces **Δp** (delta pressure) summaries.  
    - Outputs files ending with `*_truestats.csv` in the **Tared** folder.
 
+3. **`StatsSum_polar_force_coefficient_to_csv.py`**
+   - Recursively collects **tared load-cell files** from **Polar runs** across all tested **angles of attack**.
+   - Reads **testing-day conditions** to compute **airspeed** from pitot-tube data and the corresponding **Reynolds number**.
+   - Computes **lift/drag coefficients (CL, CD)**, attaches airspeed and Reynolds, **propagates errors**, and **concatenates** everything into a single summary CSV under `Post_processed_force_coefficient` folder (e.g., `Force_coefficient_AoA_ * _stats.csv`).
+
 ## Script: StatsSum
 
 These scripts collect every `_truestats.csv` produced by the StatsCal step (in each run folder) and **concatenate them into metadata summary CSVs** for easy downstream analysis.
