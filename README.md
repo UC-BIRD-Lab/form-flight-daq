@@ -105,6 +105,19 @@ R scripts to apply **mutual information (MI)** to quantify how much information 
 - Designed to compare MI across configurations (AoA, X, Iter, etc.).
 
 
+## Script (R): Sensitivity analysis of different predictive model
+
+This R script compares predictive models (LM, GAM, RF, XGBoost) for estimating `delta_L_D_mean` using combinations of pressure taps, AoA, and relative position (Δx, Δy, Δz). Evaluates performance via RMSE across multiple feature sets.
+
+### Inputs
+- `Post_processed_stats_summarized/L_D_True_Stats_Iter_0.csv`
+- `Post_processed_stats_summarized/L_D_True_Stats_Iter_1.csv`
+- `Post_processed_stats_summarized/Pressure_True_Stats_Iter_0.csv`
+- `Post_processed_stats_summarized/Pressure_True_Stats_Iter_1.csv`
+
+### Outputs
+- RMSE comparison plot → `Preditive_model_data/plot/Model_performance_RMSE_Plot.svg`
+- (opt) RMSE summary Latex table → `Latex_table_S1_RMSE.txt`
 
 
 
