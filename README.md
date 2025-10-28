@@ -1,5 +1,5 @@
-# form-flight-daq
-Formation flight data acquisition
+# Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight
+Github code for paper: Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight
 
 ## Contents
 This repo includes two python scripts, one containing the daqmx class, the other prompts the user for testing information (AoA, X,Y,Z, iteration,...) for file naming convention.
@@ -72,3 +72,15 @@ These scripts collect every `_truestats.csv` produced by the StatsCal step (in e
    - Recursively finds all `*_truestats.csv` files for **pressure taps** across all tested configurations.  
    - Extracts the same run metadata from the folder structure and appends it as columns.  
    - Concatenates rows into a single table and writes one CSV **per Iter** as `Pressure_True_Stats_Iter_*.csv` under `Post_processed_stats_summarized`.
+
+## Script: RepCheck
+
+Checks the **repeatability** between **Iteration 0** and **Iteration 1** results.
+
+- **Method:** Computes the **root-mean-square deviation (RMSD)** for each matching data point across Iters, then **normalizes by the data range** to report **NRMSD (%)**.
+- **Input:** Summarized stats in `Post_processed_stats_summarized/` (from the `StatsSum_*` scripts).
+- **Output:** A text report listing **NRMSD for pressure** and **NRMSD for force** datasets.
+
+**Notes**
+- NRMSD = RMSD / (max − min), computed per comparable group/configuration.
+- Assumes the summarised CSVs contain consistent metadata (e.g., `type_of_run`, `X`, `AoA`, `Iter`) to align pairs between Iter 0 and Iter 1.
