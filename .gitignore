@@ -1,6 +1,7 @@
 # --- Data directories ---
 /Post_Data/
 /Raw_data/
+/Post_Data_C/
 
 # Keep placeholders / docs inside ignored dirs
 !/Post_Data/.gitkeep

@@ -39,3 +39,15 @@ To make the code running, you need to download the `Raw_Data` from XXX to this w
 - Both scripts also save intermediate “Test” and “Bias/Tare” outputs in `Post_Data/.../Test` and `Post_Data/.../Bias` for traceability.  
 - Folder structure and filenames are preserved so runs can be cross-referenced with raw data.
 
+## Script: StatsCal
+These scripts compute **true error and statistics** from **time-series** data for both **pressure** and **force** measurements, following the methodology described in this paper: <http://www.metrology.pg.gda.pl/full/2010/M&MS_2010_003.pdf>.
+
+1. **`StatsCal_L_D_stats_csv.py`**  
+   - Computes per-sample and aggregate statistics for lift and drag after **subtracting sting aerodynamic effects**.  
+   - Performs proper **error propagation** and produces **ΔL/D** (delta L/D) summaries.  
+   - Outputs files ending with `*_truestats.csv` in the **Tared** folder.
+
+2. **`StatsCal_Pressure_stats_csv.py`**  
+   - Computes per-sample and aggregate statistics for **pressure** with proper **error propagation**.  
+   - Produces **Δp** (delta pressure) summaries.  
+   - Outputs files ending with `*_truestats.csv` in the **Tared** folder.
