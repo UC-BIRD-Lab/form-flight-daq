@@ -349,6 +349,22 @@ if __name__ == '__main__':
         calculate_lift_drag_coefficient_stats(density_info_csv_path, ref_area, no_samples, i)
         print(f'Force coefficient calculation for AoA {i} is done!')
     
+    # Combine all AoA results into one CSV file
+    combined_results = []
+
+    for i in AoA_str:
+        results_file_name = f'Post_processed_force_coefficient/Force_coefficient_AoA_{i}_stats.csv'
+        if os.path.exists(results_file_name):
+            df = pd.read_csv(results_file_name)
+            combined_results.append(df)
+
+    if combined_results:
+        combined_df = pd.concat(combined_results, ignore_index=True)
+        combined_df.to_csv('Post_processed_force_coefficient/Force_Coefficients_AoA_All.csv', index=False)
+        print('All AoA results have been combined into Force_Coefficients_AoA_All.csv')
+    else:
+        print('No results found to combine.')
+    
 
 
 

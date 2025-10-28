@@ -89,3 +89,26 @@ Checks the **repeatability** between **Iteration 0** and **Iteration 1** results
 **Notes**
 - NRMSD = RMSD / (max − min), computed per comparable group/configuration.
 - Assumes the summarised CSVs contain consistent metadata (e.g., `type_of_run`, `X`, `AoA`, `Iter`) to align pairs between Iter 0 and Iter 1.
+
+
+
+
+
+
+
+
+
+
+
+## Script: Plotter
+
+These scripts generate publication-ready plots from the processed summary CSVs.
+
+1. **`Plotter_force_coefficient.py`**  
+   - Plots **CL vs. α**, **CD vs. α**, **(CL & CD) vs. α** (combined panel), and the **drag polar (CD vs. CL)**.  
+   - **Input:** `Post_processed_force_coefficient/Force_Coefficients_AoA_All.csv` (produced by `StatsSum_polar_force_coefficient_to_csv.py`).  
+   - **Output:** Figures saved in the `Polar_Plot/` folder:
+     - `CL_vs_alpha.svg`
+     - `CD_vs_alpha.svg`
+     - `CL_CD_vs_alpha.svg`
+     - `Drag_Polar.svg`

@@ -4,6 +4,7 @@
 /Post_Data_C/
 /Post_processed_stats_summarized/
 /Post_processed_force_coefficient/
+/Polar_Plot/
 
 # Keep placeholders / docs inside ignored dirs
 !/Post_Data/.gitkeep
