@@ -25,7 +25,7 @@ A `Raw_Data` folder containing all measured force and pressure data. Avaliable a
 
 To make the code running, you need to download the `Raw_Data` from XXX to this working directory.
 
-## Script: Converter
+## Script (Python) : Converter
 
 **Tare definition:** *“Tare” is measured with the model powered on and the wind tunnel turned off.*
 1. **`Converter_pressure_tap.py`**  
@@ -42,7 +42,7 @@ To make the code running, you need to download the `Raw_Data` from XXX to this w
 - Both scripts also save intermediate “Test” and “Bias/Tare” outputs in `Post_Data/.../Test` and `Post_Data/.../Bias` for traceability.  
 - Folder structure and filenames are preserved so runs can be cross-referenced with raw data.
 
-## Script: StatsCal
+## Script (Python) : StatsCal
 
 These scripts compute **true error and statistics** from **time-series** data for both **pressure** and **force** measurements, following the methodology described in this paper: <http://www.metrology.pg.gda.pl/full/2010/M&MS_2010_003.pdf>.
 
@@ -61,7 +61,7 @@ These scripts compute **true error and statistics** from **time-series** data fo
    - Reads **testing-day conditions** to compute **airspeed** from pitot-tube data and the corresponding **Reynolds number**.
    - Computes **lift/drag coefficients (CL, CD)**, attaches airspeed and Reynolds, **propagates errors**, and **concatenates** everything into a single summary CSV under `Post_processed_force_coefficient` folder (e.g., `Force_coefficient_AoA_ * _stats.csv`).
 
-## Script: StatsSum
+## Script (Python) : StatsSum
 
 These scripts collect every `_truestats.csv` produced by the StatsCal step (in each run folder) and **concatenate them into metadata summary CSVs** for easy downstream analysis.
 
@@ -78,7 +78,7 @@ These scripts collect every `_truestats.csv` produced by the StatsCal step (in e
    - Extracts the same run metadata from the folder structure and appends it as columns.  
    - Concatenates rows into a single table and writes one CSV **per Iter** as `Pressure_True_Stats_Iter_*.csv` under `Post_processed_stats_summarized`.
 
-## Script: RepCheck
+## Script (Python) : RepCheck
 
 Checks the **repeatability** between **Iteration 0** and **Iteration 1** results.
 
@@ -91,6 +91,18 @@ Checks the **repeatability** between **Iteration 0** and **Iteration 1** results
 - Assumes the summarised CSVs contain consistent metadata (e.g., `type_of_run`, `X`, `AoA`, `Iter`) to align pairs between Iter 0 and Iter 1.
 
 
+## Script (R): MI
+
+R scripts to apply **mutual information (MI)** to quantify how much information the **pressure-set signals** share with **aerodynamic states**.
+
+- **Input:** Summarized meta-stats CSVs in `Post_processed_stats_summarized/`.
+- **Output:**  
+  - One **bin-selection** diagnostic plot.  
+  - Four CSV files with MI results, saved in `MI_results/`.
+
+**Notes**
+- Implements MI with proper discretization/binning controls and reproducible seeds.
+- Designed to compare MI across configurations (AoA, X, Iter, etc.).
 
 
 
@@ -100,7 +112,7 @@ Checks the **repeatability** between **Iteration 0** and **Iteration 1** results
 
 
 
-## Script: Plotter
+## Script (Python) : Plotter
 
 These scripts generate publication-ready plots from the processed summary CSVs.
 
