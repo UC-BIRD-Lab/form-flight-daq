@@ -130,3 +130,13 @@ These scripts generate publication-ready plots from the processed summary CSVs.
      - `CD_vs_alpha.svg`
      - `CL_CD_vs_alpha.svg`
      - `Drag_Polar.svg`
+
+2. **`Plotter_MI_taps.py`**
+- Plots Mutual Information (MI) for individual taps and combinations.
+- Input:
+  - `MI_results/Individual_MI_results.csv`
+  - `MI_results/Combination_MI_results.csv`
+- Output (saved to `MI_results/Plots/`):
+  - `Individual_MI_results.svg` — MI per tap
+  - `Combination_MI_vs_Num_Taps.svg` — MI vs number of taps
+  - `Combination_MI_Local_Normalized.svg` — locally normalized summed MI
