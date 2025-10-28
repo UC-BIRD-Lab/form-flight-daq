@@ -10,6 +10,7 @@ Used for collecting and saving pressure tap, force sensor, and pitot tube data d
 ## Reference data
 Box folder containing the MATLAB files for previous wind tunnel operation: https://ucdavis.box.com/s/df16xfmk344mtkfgysrjifpcb65wsea8
 
+# Code Workflow
 ## Folder: Wind Tunnel Test Run Code
 This folder contains scripts for collecting wind tunnel measurement data.
 **Inputs:**  
@@ -21,9 +22,11 @@ This folder contains scripts for collecting wind tunnel measurement data.
 A `Raw_Data` folder containing all measured force and pressure data. Avaliable at XXX figshare
 
 ## Folder: Raw Data folder
+
 To make the code running, you need to download the `Raw_Data` from XXX to this working directory.
 
 ## Script: Converter
+
 **Tare definition:** *“Tare” is measured with the model powered on and the wind tunnel turned off.*
 1. **`Converter_pressure_tap.py`**  
    - Converts raw pressure-tap voltages to calibrated pressures.  
@@ -40,6 +43,7 @@ To make the code running, you need to download the `Raw_Data` from XXX to this w
 - Folder structure and filenames are preserved so runs can be cross-referenced with raw data.
 
 ## Script: StatsCal
+
 These scripts compute **true error and statistics** from **time-series** data for both **pressure** and **force** measurements, following the methodology described in this paper: <http://www.metrology.pg.gda.pl/full/2010/M&MS_2010_003.pdf>.
 
 1. **`StatsCal_L_D_stats_csv.py`**  
@@ -51,3 +55,20 @@ These scripts compute **true error and statistics** from **time-series** data fo
    - Computes per-sample and aggregate statistics for **pressure** with proper **error propagation**.  
    - Produces **Δp** (delta pressure) summaries.  
    - Outputs files ending with `*_truestats.csv` in the **Tared** folder.
+
+## Script: StatsSum
+
+These scripts collect every `_truestats.csv` produced by the StatsCal step (in each run folder) and **concatenate them into metadata summary CSVs** for easy downstream analysis.
+
+1. **`StatsSum_all_force_to_one_csv.py`**  
+   - Recursively finds all `*_truestats.csv` files for **forces/moments** across all tested configurations.  
+   - Extracts run metadata from the folder structure and appends it as columns.  
+   - Concatenates rows in a consistent column order and writes:  
+     - `L_D_True_Stats_Iter_0.csv`  
+     - `L_D_True_Stats_Iter_2.csv`  
+     into the `Post_processed_stats_summarized` folder.
+
+2. **`StatsSum_all_pressure_to_one_csv.py`**  
+   - Recursively finds all `*_truestats.csv` files for **pressure taps** across all tested configurations.  
+   - Extracts the same run metadata from the folder structure and appends it as columns.  
+   - Concatenates rows into a single table and writes one CSV **per Iter** as `Pressure_True_Stats_Iter_*.csv` under `Post_processed_stats_summarized`.

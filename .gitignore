@@ -2,6 +2,7 @@
 /Post_Data/
 /Raw_data/
 /Post_Data_C/
+/Post_processed_stats_summarized/
 
 # Keep placeholders / docs inside ignored dirs
 !/Post_Data/.gitkeep
