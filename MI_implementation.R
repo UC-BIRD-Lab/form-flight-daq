@@ -93,7 +93,7 @@ compute_MI_vs_nbins <- function(pressure_data, delta_L_D_data, bin_range = seq(1
   }
   
   # Print the results
-  print(head(mi_nbins_results))
+  print(mi_nbins_results)
   cat("\nSelected optimal number of bins:", stop_nbin, "\n")
   
   return(list(results = mi_nbins_results, optimal_bins = stop_nbin))
