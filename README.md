@@ -112,6 +112,12 @@ R scripts to apply **mutual information (MI)** to quantify how much information 
 
 
 
+
+
+
+
+
+
 ## Script (Python) : Plotter
 
 These scripts generate publication-ready plots from the processed summary CSVs.

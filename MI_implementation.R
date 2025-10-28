@@ -202,7 +202,10 @@ MI_ranked_combo <- MI_results_combination$ranked_MI
 if (!dir.exists("MI_results")) {
   dir.create("MI_results")
 }
-
+if (!dir.exists("MI_results/Plots")) {
+  dir.create("MI_results/Plots")
+}
+# 
 # --- Plot MI vs. Number of Bins ---
 bin_plot <- ggplot(bin_results$results, aes(x = nbins, y = Mutual_Information)) +
   geom_line() +
@@ -219,7 +222,7 @@ bin_plot <- ggplot(bin_results$results, aes(x = nbins, y = Mutual_Information)) 
 print(bin_plot)
 
 # Save plot to folder
-ggsave("MI_results/MI_Vs_bin_plot.pdf", plot = bin_plot, width = 6, height = 4, device = "pdf")
+ggsave("MI_results/Plots/MI_Vs_bin_plot.pdf", plot = bin_plot, width = 6, height = 4, device = "pdf")
 
 # --- Save CSV results to the same folder ---
 write.csv(MI_unranked_combo, "MI_results/Combination_MI_results.csv", row.names = FALSE)
