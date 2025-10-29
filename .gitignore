@@ -1,12 +1,12 @@
 # --- Data directories ---
 /Post_Data/
 /Raw_data/
-/Post_Data_C/
 /Post_processed_stats_summarized/
 /Post_processed_force_coefficient/
 /Polar_Plot/
 /MI_results/
 /Predictive_model_data/
+/Colorbars_for_Figures/
 
 # Keep placeholders / docs inside ignored dirs
 !/Post_Data/.gitkeep
