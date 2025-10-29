@@ -120,12 +120,26 @@ This R script compares predictive models (LM, GAM, RF, XGBoost) for estimating `
 - (opt) RMSE summary Latex table → `Latex_table_S1_RMSE.txt`
 
 
+# Script (Python) : PredModel
+These scripts are for XGBoost model training, hyper parameter tunning with beyesian optimization, and testing on the iteration 1 dataset.
+1. `PredModal_Bayes_Optimization_HyperP_XGBoost_P_to_LD.py`
+### Inputs
+- `Post_processed_stats_summarized/L_D_True_Stats_Iter_0.csv`
+- `Post_processed_stats_summarized/L_D_True_Stats_Iter_1.csv`
+- `Post_processed_stats_summarized/Pressure_True_Stats_Iter_0.csv`
+- `Post_processed_stats_summarized/Pressure_True_Stats_Iter_1.csv`
+
+### Output
+Hyperparameter tunning results csv from beysian optimization
+
+2. model on test set
+3. model evalution
 
 
 
 
-
-
+## Script (Python) : Heatmap plotter
+1. 
 
 
 

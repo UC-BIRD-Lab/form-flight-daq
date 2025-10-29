@@ -953,10 +953,10 @@ model_RMSE_plot <- ggplot(long, aes(x = ID, y = RMSE, color = Group, shape = Dat
 print(model_RMSE_plot)
 
 # --- save ---
-if (!dir.exists("Preditive_model_data")) dir.create("Preditive_model_data")
-if (!dir.exists("Preditive_model_data/plot")) dir.create("Preditive_model_data/plot")
+if (!dir.exists("Predictive_model_data")) dir.create("Predictive_model_data")
+if (!dir.exists("Predictive_model_data/plot")) dir.create("Predictive_model_data/plot")
 
-ggsave("Preditive_model_data/plot/Model_performance_RMSE_Plot.svg",
+ggsave("Predictive_model_data/plot/Model_performance_RMSE_Plot.svg",
        plot = model_RMSE_plot,
        device = svglite::svglite,
        width = 9, height = 5, units = "in",
@@ -1023,7 +1023,7 @@ write_rmse_latex <- function(clean, file = "Table_S1_RMSE.txt", digits = 3) {
 }
 
 # ---- Use it:
-write_rmse_latex(clean, file = "Preditive_model_data/Latex_table_S1_RMSE.txt", digits = 3)
+write_rmse_latex(clean, file = "Predictive_model_data/Latex_table_S1_RMSE.txt", digits = 3)
 
 ```
 

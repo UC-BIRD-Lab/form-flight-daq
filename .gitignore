@@ -6,6 +6,7 @@
 /Post_processed_force_coefficient/
 /Polar_Plot/
 /MI_results/
+/Predictive_model_data/
 
 # Keep placeholders / docs inside ignored dirs
 !/Post_Data/.gitkeep
