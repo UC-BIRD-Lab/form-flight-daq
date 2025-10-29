@@ -2,13 +2,21 @@
 Github code for paper: Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight
 
 ## Contents
-This repo includes two python scripts, one containing the daqmx class, the other prompts the user for testing information (AoA, X,Y,Z, iteration,...) for file naming convention.
+This repo includes all the code needed for the paper :Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight.
 
 ## Purpose
-Used for collecting and saving pressure tap, force sensor, and pitot tube data during formation flight experiments. 
+1. Used for collecting and saving pressure tap, force sensor, and pitot tube data during formation flight experiments. 
+2. Post-processing collected data
+3. Ran statitcal analysis and summarized the data to meta dataset
+4. Ran Mutual information theory for investigation
+5. Predictive model comparison
+6. Hyperparameter tunning for XGBoost model with Bayesian optimization
+7. Final model train and testing
+8. Summarize the model performance
+9. Plot generating
 
 ## Reference data
-Box folder containing the MATLAB files for previous wind tunnel operation: https://ucdavis.box.com/s/df16xfmk344mtkfgysrjifpcb65wsea8
+Figshare: XXX PLACEHOLDER Download all the input data to enable running all the code below.
 
 # Code Workflow
 ## Folder: Wind Tunnel Test Run Code
@@ -214,3 +222,8 @@ These scripts generate publication-ready plots from the processed summary CSVs.
 - Plots actual heatmap from second iteration data (test set)
 - Plot all the error heatmaps from the prediction subtract the actual value 
 - Plot overall summary of RMSE heatmap for each model.
+
+
+## Script (Python) : LatexConv
+**`LatexConv_table_HyperP_ModelP.py`
+This script is generating text from the model performance and optimized hyperparamters. Output a plain text that can copy-paste to latex overleaf document.
