@@ -120,21 +120,56 @@ This R script compares predictive models (LM, GAM, RF, XGBoost) for estimating `
 - (opt) RMSE summary Latex table → `Latex_table_S1_RMSE.txt`
 
 
-# Script (Python) : PredModel
-These scripts are for XGBoost model training, hyper parameter tunning with beyesian optimization, and testing on the iteration 1 dataset.
-1. `PredModal_Bayes_Optimization_HyperP_XGBoost_P_to_LD.py`
+
+
+
+
+
+# Script (Python): Predictive Model (PredModel)
+
+This folder includes scripts for XGBoost-based predictive modeling and Bayesian hyperparameter optimization used in aerodynamic formation-flight analysis.
+
+## 1. PredModal_Bayes_Optimization_HyperP_XGBoost_P_to_LD.py
+Trains and tunes XGBoost models using Bayesian optimization with 6-fold cross-validation.
+The optimization runs for 1000 iterations with 20 random initializations under a fixed random seed.
+
 ### Inputs
-- `Post_processed_stats_summarized/L_D_True_Stats_Iter_0.csv`
-- `Post_processed_stats_summarized/L_D_True_Stats_Iter_1.csv`
-- `Post_processed_stats_summarized/Pressure_True_Stats_Iter_0.csv`
-- `Post_processed_stats_summarized/Pressure_True_Stats_Iter_1.csv`
+- Post_processed_stats_summarized/L_D_True_Stats_Iter_0.csv
+- Post_processed_stats_summarized/L_D_True_Stats_Iter_1.csv
+- Post_processed_stats_summarized/Pressure_True_Stats_Iter_0.csv
+- Post_processed_stats_summarized/Pressure_True_Stats_Iter_1.csv
 
 ### Output
-Hyperparameter tunning results csv from beysian optimization
+- CSV file containing the Bayesian optimization hyperparameter tuning results.
 
-2. model on test set
-3. model evalution
+### Note
+Each predictor configuration (tap count, AoA, XYZ) is tuned independently.
+This process is computationally intensive (~20 hours on an Intel i9-10850K CPU at full load).
 
+## 2. PredModel_delta_pressure_interpolator.py
+Generates the interpolated delta-pressure dataset used for overfitting sanity checks.
+The output file is required by the next script even for non-interpolated predictions.
+
+### Input
+- Post_processed_stats_summarized/Pressure_True_Stats_Iter_1.csv
+
+### Output
+- Predictive_model_data/Interpolated_pressure_data/Pressure_True_Stats_Iter_1_Interpolated.csv
+
+## 3. PredModel_final_train_and_test.py
+Loads the optimized hyperparameters from the Bayesian tuning step and performs final XGBoost training,
+cross-validated evaluation, and prediction generation. Implements 6-fold cross-validation with early stopping
+and multiple random seeds for robustness.
+
+### Inputs
+- Same preprocessed CSVs as above
+- Bayesian tuning CSVs from step 1
+- Interpolated pressure data from step 2
+
+### Outputs
+- Predicted vs actual delta L/D results (per tap configuration)
+- Evaluation metrics (RMSE, NRMSE)
+- Model prediction CSVs in the output directory
 
 
 
