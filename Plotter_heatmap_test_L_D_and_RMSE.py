@@ -375,8 +375,12 @@ def plotting_model_evaluation_heatmap(matrix, folder_path, file_name, plotting_t
         cbar_name = 'Mutual Information Value'
         cmap_name = 'GnBu'
         annotation_color = 'black'
-
-    heatmap = plt.imshow(plotting_matrix, cmap=cmap_name, aspect=1, vmax=vmax, vmin=0)
+        
+    vmin = 0
+    vmax = 1.7 # Set maximum value for color scale for RMSE heatmap, the max is 1.67, so I set to 1.7
+    heatmap = plt.imshow(plotting_matrix, cmap=cmap_name, aspect=1, vmax=vmax, vmin=vmin)
+    print(f'Heatmap colorbar Upper:{vmax}')
+    print(f'Heatmap colorbar Lower:{vmin}')
     cbar = plt.colorbar(heatmap, orientation='horizontal', pad=0.2)
     cbar.ax.tick_params(labelsize=8)
     cbar.set_label(cbar_name, fontsize=8)
@@ -436,8 +440,8 @@ if __name__ == "__main__":
             save_file_path_error = os.path.join(save_folder_path, f"Error_Heatmap_Test_{Model}_{file_name_without_ext}.svg")
             
             # Plot the heatmap
-            error_L_D_plotter(Model, file_path_evaluation, actual_L_D_matrix, save_file_path_error)
-            evaluation_force_ploter(Model, file_path_evaluation, save_file_path)
+            # error_L_D_plotter(Model, file_path_evaluation, actual_L_D_matrix, save_file_path_error)
+            # evaluation_force_ploter(Model, file_path_evaluation, save_file_path)
 
     # Plot the RMSE heatmap
     # -----------------------------------------------------------------

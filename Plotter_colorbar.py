@@ -54,7 +54,7 @@ if __name__ == '__main__':
     create_horizontal_colorbar(
         colormap=plt.cm.Blues,
         cbar_min=0,
-        cbar_max=2,
+        cbar_max=1.7, # Set maximum value for color scale for RMSE heatmap, the max is 1.67, so I set to 1.7
         label=r'$RMSE$',
         filename=os.path.join(output_folder_path, 'RMSE_colorbar_horizontal.svg'),
         step=4
