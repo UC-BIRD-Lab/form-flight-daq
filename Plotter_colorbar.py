@@ -1,38 +1,41 @@
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import colors as mcolors
 
 def create_horizontal_colorbar(colormap, cbar_min, cbar_max, label, filename, step):
-    # Create a ScalarMappable to map normalized data to colors
-    step_size = (cbar_max - cbar_min) / step
-    norm = plt.Normalize(cbar_min, cbar_max)
-    increment = step_size
+    # keep vmin < vmax; if reversed was given, swap and flip the cmap
     cmap = colormap
+    vmin, vmax = cbar_min, cbar_max
+    if vmin > vmax:
+        vmin, vmax = vmax, vmin
+        cmap = colormap.reversed()
 
-    # Create a figure for the colorbar
+    # symmetric center at 0 if range crosses 0 
+    if vmin < 0 < vmax:
+        norm = mcolors.TwoSlopeNorm(vmin=vmin, vcenter=0, vmax=vmax)
+    else:
+        norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
+
+    # evenly spaced ticks (step = number of intervals)
+    ticks = np.linspace(vmin, vmax, step + 1)
+
     fig, ax = plt.subplots(figsize=(3.25, 1.5))
-
-    # Draw the colorbar
     cbar = plt.colorbar(
         plt.cm.ScalarMappable(norm=norm, cmap=cmap),
-        ax=ax,
-        orientation='horizontal',
-        ticks=np.arange(cbar_min, cbar_max + increment, increment)
+        ax=ax, orientation='horizontal', ticks=np.round(ticks, 1)
     )
+
     cbar.set_label(label, rotation=0, labelpad=10, fontsize=10)
     cbar.ax.xaxis.set_label_coords(0.5, -1.5)
 
-    # Align the tick labels to the bottom
     for tick_label in cbar.ax.get_xticklabels():
         tick_label.set_va('top')
 
     cbar.ax.tick_params(labelsize=7, pad=5, width=0.25)
-
-    # Make the border thinner
     cbar.outline.set_linewidth(0.25)
-
-    # Remove the axis
     ax.axis('off')
+
     plt.rcParams['svg.fonttype'] = 'none'
     plt.savefig(filename, format='svg', dpi=600, transparent=True)
     plt.show()
