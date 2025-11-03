@@ -364,8 +364,6 @@ def determine_best_model(csv_file_path):
 
 def plotting_model_evaluation_heatmap(matrix, folder_path, file_name, plotting_type):
     plotting_matrix = ma.masked_where(matrix == 0., matrix)
-    vmax = plotting_matrix.max()
-
     plt.figure(figsize=(6.5/2, 3.25))
     if plotting_type == "RMSE":
         cbar_name = 'RMSE Value'
