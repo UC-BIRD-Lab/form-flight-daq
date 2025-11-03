@@ -181,54 +181,6 @@ data_model_test_reduced <- merge(force_selected_reduced_test, pressure_selected_
 
 ```
 
-
-# Data exploration
-```{r}
-# Histograms:
-#-------------------------------------------------------------------------------
-# delta_pressure_mean histograms
-# full set
-pressure_long <- melt(pressure_selected_train, measure.vars = upper_taps)
-ggplot(pressure_long, aes(x = value)) +
-  geom_histogram(fill = "blue", color = "black", bins = 20, alpha = 0.5) +
-  facet_wrap(~ variable, scales = "free_x", ncol = 4) + 
-  theme_minimal(base_size = 14) +
-  labs(title = "[Full dataset] Histograms of delta pressure",
-       x = "Delta pressure",
-       y = "Frequency") +
-  theme(strip.text = element_text(),
-        plot.title = element_text(hjust = 0.5))
-
-# reduced set
-pressure_long_reduced <- melt(pressure_selected_reduced_train, measure.vars = upper_taps)
-ggplot(pressure_long_reduced, aes(x = value)) +
-  geom_histogram(fill = "pink3", color = "black", bins = 20, alpha = 0.5) +
-  facet_wrap(~ variable, scales = "free_x", ncol = 4) + 
-  theme_minimal(base_size = 14) +
-  labs(title = "[Reduced dataset] Histograms of delta pressure",
-       x = "Delta pressure",
-       y = "Frequency") +
-  theme(strip.text = element_text(),
-        plot.title = element_text(hjust = 0.5))
-
-# delta_L_D histograms
-# full set
-ggplot(force_selected_train, aes(x = delta_L_D_mean)) +
-  geom_histogram(fill = "lightblue2", color = "black", bins = 20, alpha = 0.5) +
-  theme_minimal(base_size = 14) +
-  labs(title = "[Full dataset] Histograms of delta L/D",
-       x = "Delta L/D",
-       y = "Frequency") 
-
-# reduced set
-ggplot(force_selected_reduced_train, aes(x = delta_L_D_mean)) +
-  geom_histogram(fill = "brown4", color = "black", bins = 20, alpha = 0.5) +
-  theme_minimal(base_size = 14) +
-  labs(title = "[Reduced dataset] Histograms of delta L/D",
-       x = "Delta L/D",
-       y = "Frequency") 
-```
-
 # R-squared calculation function
 Equation: https://www.listendata.com/2014/08/adjusted-r-squared.html#:~:text=Adjusted%20R%2Dsquared%20value%20is%20calculated%20using%20the%20formula%3A%201,variables)%20in%20the%20regression%20model.
 ```{r}
@@ -495,133 +447,14 @@ stats_GAM_without_AoA_reduced <- check_stats(Model_GAM_without_AoA_reduced, data
 ```
 ## RandomForest
 ```{r}
-# Tune RandomForest model
-# mtry = Number of variables randomly selected at each split
-best_mtry_with_XYZ <- tuneRF(
-  data_model_train_full[, -which(names(data_model_train_full) == "delta_L_D_mean")], 
-  data_model_train_full$delta_L_D_mean, 
-  stepFactor = 1.2,  
-  improve = 0.01,    
-  ntreeTry = 2000,    
-  trace = TRUE
-)
+library(randomForest)
+library(Metrics)
 
-# Extract the mtry value with the minimum OOB error
-best_mtry_value_XYZ <- best_mtry_with_XYZ[best_mtry_with_XYZ[, 2] == min(best_mtry_with_XYZ[, 2]), 1]
-print(best_mtry_value_XYZ)
+set.seed(123)
 
+# Predicting set
+y_col <- "delta_L_D_mean"
 
-Model_RF_without_AoA_XYZ <- randomForest(delta_L_D_mean ~ tap0_delta_pressure_mean + tap2_delta_pressure_mean + tap4_delta_pressure_mean + 
-                                      tap6_delta_pressure_mean + tap8_delta_pressure_mean + tap9_delta_pressure_mean + 
-                                      tap10_delta_pressure_mean + tap11_delta_pressure_mean + tap13_delta_pressure_mean + 
-                                      tap15_delta_pressure_mean + tap17_delta_pressure_mean + tap19_delta_pressure_mean +
-                                      XPos + YPos + ZPos,
-                                    data = data_model_train_full, mtry = best_mtry_value_XYZ, ntree = 2000, importance = TRUE)
-
-Model_RF_with_AoA_XYZ <- randomForest(delta_L_D_mean ~ tap0_delta_pressure_mean + tap2_delta_pressure_mean + tap4_delta_pressure_mean + 
-                                    tap6_delta_pressure_mean + tap8_delta_pressure_mean + tap9_delta_pressure_mean + 
-                                    tap10_delta_pressure_mean + tap11_delta_pressure_mean + tap13_delta_pressure_mean + 
-                                    tap15_delta_pressure_mean + tap17_delta_pressure_mean + tap19_delta_pressure_mean +
-                                    XPos + YPos + ZPos +
-                                    AoA,
-                                  data = data_model_train_full, mtry = best_mtry_value_XYZ, ntree = 2000, importance = TRUE)
-
-best_mtry <- tuneRF(
-  x = subset(data_model_train_full,
-             select = -c(delta_L_D_mean, XPos, YPos, ZPos)),
-  y         = data_model_train_full$delta_L_D_mean,
-  stepFactor = 1.01,  
-  improve = 0.005,    # Minimum improvement
-  ntreeTry = 2000,    
-  trace = TRUE
-)
-best_mtry_value <- best_mtry[best_mtry[, 2] == min(best_mtry[, 2]), 1]
-
-
-# Random Forest model without AoA
-Model_RF_without_AoA <- randomForest(delta_L_D_mean ~ tap0_delta_pressure_mean + tap2_delta_pressure_mean + tap4_delta_pressure_mean + 
-                                      tap6_delta_pressure_mean + tap8_delta_pressure_mean + tap9_delta_pressure_mean + 
-                                      tap10_delta_pressure_mean + tap11_delta_pressure_mean + tap13_delta_pressure_mean + 
-                                      tap15_delta_pressure_mean + tap17_delta_pressure_mean + tap19_delta_pressure_mean ,
-                                    data = data_model_train_full, mtry = best_mtry_value, ntree = 2000, importance = TRUE)
-
-# Random Forest model with AoA
-Model_RF_with_AoA <- randomForest(delta_L_D_mean ~ tap0_delta_pressure_mean + tap2_delta_pressure_mean + tap4_delta_pressure_mean + 
-                                    tap6_delta_pressure_mean + tap8_delta_pressure_mean + tap9_delta_pressure_mean + 
-                                    tap10_delta_pressure_mean + tap11_delta_pressure_mean + tap13_delta_pressure_mean + 
-                                    tap15_delta_pressure_mean + tap17_delta_pressure_mean + tap19_delta_pressure_mean + AoA,
-                                  data = data_model_train_full, mtry = best_mtry_value, ntree = 2000, importance = TRUE)
-
-n_predictors_RF_without_AoA <- length(Model_RF_without_AoA$importance[, 1]) 
-n_predictors_RF_with_AoA <- length(Model_RF_with_AoA$importance[, 1]) 
-n_predictors_RF_without_XYZ <- length(Model_RF_without_AoA_XYZ$importance[, 1])
-n_predictors_RF_with_XYZ <- length(Model_RF_with_AoA_XYZ$importance[, 1])
-
-stats_RF_with_AoA <- check_stats(Model_RF_with_AoA, data_model_train_full, data_model_test_full, "delta_L_D_mean", num_predictors = n_predictors_RF_with_AoA)
-
-stats_RF_without_AoA <- check_stats(Model_RF_without_AoA, data_model_train_full, data_model_test_full, "delta_L_D_mean", num_predictors = n_predictors_RF_without_AoA)
-
-stats_RF_with_AoA_XYZ <- check_stats(Model_RF_with_AoA_XYZ, data_model_train_full, data_model_test_full, "delta_L_D_mean", num_predictors = n_predictors_RF_with_XYZ)
-
-stats_RF_without_AoA_XYZ <- check_stats(Model_RF_without_AoA_XYZ, data_model_train_full, data_model_test_full, "delta_L_D_mean", num_predictors = n_predictors_RF_without_XYZ)
-
-oob_rmse_with_AoA <- sqrt(tail(Model_RF_with_AoA$mse, 1))
-stats_RF_with_AoA$rmse_train <- oob_rmse_with_AoA
-
-oob_rmse_without_AoA <- sqrt(tail(Model_RF_without_AoA$mse, 1))
-stats_RF_without_AoA$rmse_train <- oob_rmse_without_AoA 
-
-oob_rmse_with_AoA_XYZ <- sqrt(tail(Model_RF_with_AoA_XYZ$mse, 1))
-stats_RF_with_AoA_XYZ$rmse_train <- oob_rmse_with_AoA_XYZ
-
-oob_rmse_without_AoA_XYZ <- sqrt(tail(Model_RF_without_AoA_XYZ$mse, 1))
-stats_RF_without_AoA_XYZ$rmse_train <- oob_rmse_without_AoA_XYZ
-
-
-```
-### Reduced model
-```{r}
-# Random Forest model without AoA (Reduced Dataset)
-Model_RF_without_AoA_reduced <- randomForest(delta_L_D_mean ~ tap0_delta_pressure_mean + tap2_delta_pressure_mean + tap4_delta_pressure_mean + 
-                                              tap6_delta_pressure_mean + tap8_delta_pressure_mean + tap9_delta_pressure_mean + 
-                                              tap10_delta_pressure_mean + tap11_delta_pressure_mean + tap13_delta_pressure_mean + 
-                                              tap15_delta_pressure_mean + tap17_delta_pressure_mean + tap19_delta_pressure_mean,
-                                            data = data_model_train_reduced, mtry = best_mtry_value, ntree = 2000, importance = TRUE)
-
-# Random Forest model with AoA (Reduced Dataset)
-Model_RF_with_AoA_reduced <- randomForest(delta_L_D_mean ~ tap0_delta_pressure_mean + tap2_delta_pressure_mean + tap4_delta_pressure_mean + 
-                                            tap6_delta_pressure_mean + tap8_delta_pressure_mean + tap9_delta_pressure_mean + 
-                                            tap10_delta_pressure_mean + tap11_delta_pressure_mean + tap13_delta_pressure_mean + 
-                                            tap15_delta_pressure_mean + tap17_delta_pressure_mean + tap19_delta_pressure_mean + AoA,
-                                          data = data_model_train_reduced, mtry = best_mtry_value, ntree = 2000, importance = TRUE)
-
-n_predictors_RF_without_AoA_reduced <- length(Model_RF_without_AoA_reduced$importance[, 1]) 
-n_predictors_RF_with_AoA_reduced <- length(Model_RF_with_AoA_reduced$importance[, 1]) 
-
-stats_RF_with_AoA_reduced <- check_stats(Model_RF_with_AoA_reduced, data_model_train_reduced, data_model_test_reduced, "delta_L_D_mean", num_predictors = n_predictors_RF_with_AoA_reduced)
-stats_RF_without_AoA_reduced <- check_stats(Model_RF_without_AoA_reduced, data_model_train_reduced, data_model_test_reduced, "delta_L_D_mean", num_predictors = n_predictors_RF_without_AoA_reduced)
-```
-
-## Gradient Boosting
-```{r}
-library(xgboost)
-library(Metrics)   # for RMSE()
-
-# ---- Build merged modeling frames and feature matrices (FULL set) ----
-key_cols <- c("XPos","YPos","ZPos","AoA")
-
-# Merge force (target) with pressure (features) by keys
-data_model_train_full <- merge(
-  force_selected_train,  pressure_selected_train,  by = key_cols
-)
-data_model_test_full <- merge(
-  force_selected_test,   pressure_selected_test,   by = key_cols
-)
-
-# Sanity check: must have rows after merge
-stopifnot(nrow(data_model_train_full) > 0, nrow(data_model_test_full) > 0)
-
-# Pressure-tap feature columns (12 taps, upper row)
 tap_cols <- c(
   "tap0_delta_pressure_mean","tap2_delta_pressure_mean","tap4_delta_pressure_mean",
   "tap6_delta_pressure_mean","tap8_delta_pressure_mean","tap9_delta_pressure_mean",
@@ -629,197 +462,215 @@ tap_cols <- c(
   "tap15_delta_pressure_mean","tap17_delta_pressure_mean","tap19_delta_pressure_mean"
 )
 
-# Labels
-train_labels_full <- data_model_train_full$delta_L_D_mean
-test_labels_full  <- data_model_test_full$delta_L_D_mean
+cols_taps_only <- tap_cols
+cols_taps_aoa  <- c(tap_cols, "AoA")
+cols_taps_xyz  <- c(tap_cols, "XPos","YPos","ZPos")
+cols_all       <- c(tap_cols, "XPos","YPos","ZPos","AoA")
 
-# Feature matrices expected later
-# taps + AoA
-train_matrix_full_with_AoA <- as.matrix(
-  data_model_train_full[, c(tap_cols, "AoA")]
-)
-test_matrix_full_with_AoA <- as.matrix(
-  data_model_test_full[, c(tap_cols, "AoA")]
-)
+stopifnot(all(c(y_col, cols_all) %in% names(data_model_train_full)))
+stopifnot(all(c(y_col, cols_all) %in% names(data_model_test_full)))
 
-# taps only (no AoA, no XYZ)
-train_matrix_full_without_AoA <- as.matrix(
-  data_model_train_full[, tap_cols]
-)
-test_matrix_full_without_AoA <- as.matrix(
-  data_model_test_full[, tap_cols]
-)
+# Helping function
+oob_rmse <- function(rf) sqrt(tail(rf$mse, 1))
 
-# taps + XYZ (no AoA)  — i.e., everything except target and AoA
-train_matrix_full_XYZ <- as.matrix(
-  data_model_train_full[, !(names(data_model_train_full) %in% c("delta_L_D_mean","AoA"))]
-)
-test_matrix_full_XYZ <- as.matrix(
-  data_model_test_full[, !(names(data_model_test_full)  %in% c("delta_L_D_mean","AoA"))]
-)
+tune_mtry <- function(df_train, y_col, x_cols,
+                      stepFactor = 1.2, improve = 0.01,
+                      ntreeTry = 300, trace = TRUE) {
+  x <- df_train[, x_cols, drop = FALSE]
+  y <- df_train[[y_col]]
+  tf <- tuneRF(
+    x = x, y = y,
+    stepFactor = stepFactor,
+    improve   = improve,
+    ntreeTry  = ntreeTry,
+    trace     = trace,
+    doBest    = FALSE
+  )
+  tf[which.min(tf[, 2]), 1]
+}
 
-# taps + AoA + XYZ (all predictors; only drop target)
-train_matrix_full_all <- as.matrix(
-  data_model_train_full[, names(data_model_train_full) != "delta_L_D_mean"]
-)
-test_matrix_full_all <- as.matrix(
-  data_model_test_full[,  names(data_model_test_full)  != "delta_L_D_mean"]
-)
+fit_eval_rf <- function(df_train, df_test, y_col, x_cols,
+                        mtry, ntree = 2000, importance = TRUE) {
+  fmla <- as.formula(paste(y_col, "~", paste(x_cols, collapse = " + ")))
+  rf <- randomForest(
+    formula = fmla,
+    data = df_train,
+    mtry = mtry,
+    ntree = ntree,
+    importance = importance
+  )
+  preds_test <- predict(rf, newdata = df_test)
+  list(
+    model        = rf,
+    mtry         = mtry,
+    n_features   = length(x_cols),
+    oob_rmse     = oob_rmse(rf),
+    test_rmse    = rmse(df_test[[y_col]], preds_test)
+  )
+}
 
+# Tune mtry per model on iter-0
+set.seed(123)
+mtry_taps_only <- tune_mtry(data_model_train_full, y_col, cols_taps_only)
+mtry_taps_aoa  <- tune_mtry(data_model_train_full, y_col, cols_taps_aoa)
+mtry_taps_xyz  <- tune_mtry(data_model_train_full, y_col, cols_taps_xyz)
+mtry_all       <- tune_mtry(data_model_train_full, y_col, cols_all)
+
+# Fit on all iter-0 with tuned mtry; evaluate once on iter-1 
+set.seed(123)
+RF_res_taps_only <- fit_eval_rf(data_model_train_full, data_model_test_full,
+                             y_col, cols_taps_only, mtry_taps_only)
+RF_res_taps_aoa  <- fit_eval_rf(data_model_train_full, data_model_test_full,
+                             y_col, cols_taps_aoa,  mtry_taps_aoa)
+RF_res_taps_xyz  <- fit_eval_rf(data_model_train_full, data_model_test_full,
+                             y_col, cols_taps_xyz,  mtry_taps_xyz)
+RF_res_all       <- fit_eval_rf(data_model_train_full, data_model_test_full,
+                             y_col, cols_all,       mtry_all)
+
+# summary
+cat("Model               | mtry | #feat |  OOB RMSE | Test RMSE\n")
+cat("--------------------|------|-------|-----------|----------\n")
+cat(sprintf("Taps only           | %4d | %5d | %10.4f | %8.4f\n",
+            RF_res_taps_only$mtry, RF_res_taps_only$n_features, RF_res_taps_only$oob_rmse, RF_res_taps_only$test_rmse))
+cat(sprintf("Taps + AoA          | %4d | %5d | %10.4f | %8.4f\n",
+            RF_res_taps_aoa$mtry,  RF_res_taps_aoa$n_features,  RF_res_taps_aoa$oob_rmse,  RF_res_taps_aoa$test_rmse))
+cat(sprintf("Taps + XYZ          | %4d | %5d | %10.4f | %8.4f\n",
+            RF_res_taps_xyz$mtry,  RF_res_taps_xyz$n_features,  RF_res_taps_xyz$oob_rmse,  RF_res_taps_xyz$test_rmse))
+cat(sprintf("Taps + AoA + XYZ    | %4d | %5d | %10.4f | %8.4f\n",
+            RF_res_all$mtry,       RF_res_all$n_features,       RF_res_all$oob_rmse,       RF_res_all$test_rmse))
+
+
+```
+
+## Gradient Boosting
+```{r}
+library(xgboost)
+library(Metrics)  
+library(data.table)
+library(data.table)
 
 set.seed(123)
 
-# 1) Build DMatrix objects
-# — taps + AoA (no XYZ)
-dtrain_with <- xgb.DMatrix(
-  data  = as.matrix(train_matrix_full_with_AoA),
-  label = train_labels_full
-)
-dtest_with  <- xgb.DMatrix(
-  data  = as.matrix(test_matrix_full_with_AoA),
-  label = test_labels_full
-)
+key_cols<- c("XPos","YPos","ZPos","AoA")
 
-# — taps only (no AoA, no XYZ)
-dtrain_without <- xgb.DMatrix(
-  data  = as.matrix(train_matrix_full_without_AoA),
-  label = train_labels_full
-)
-dtest_without  <- xgb.DMatrix(
-  data  = as.matrix(test_matrix_full_without_AoA),
-  label = test_labels_full
-)
-
-# — taps + XYZ (no AoA)
-train_matrix_full_XYZ <- as.matrix(
-  data_model_train_full[, !(names(data_model_train_full) %in% c("delta_L_D_mean", "AoA"))]
-)
-test_matrix_full_XYZ  <- as.matrix(
-  data_model_test_full[,  !(names(data_model_test_full)  %in% c("delta_L_D_mean", "AoA"))]
-)
-dtrain_XYZ <- xgb.DMatrix(
-  data  = train_matrix_full_XYZ,
-  label = train_labels_full
-)
-dtest_XYZ  <- xgb.DMatrix(
-  data  = test_matrix_full_XYZ,
-  label = test_labels_full
-)
-
-# — taps + AoA + XYZ (all features except target)
-train_matrix_full_all <- as.matrix(
-  data_model_train_full[, !(names(data_model_train_full) == "delta_L_D_mean")]
-)
-test_matrix_full_all  <- as.matrix(
-  data_model_test_full[,  !(names(data_model_test_full)  == "delta_L_D_mean")]
-)
-dtrain_all <- xgb.DMatrix(
-  data  = train_matrix_full_all,
-  label = train_labels_full
-)
-dtest_all  <- xgb.DMatrix(
-  data  = test_matrix_full_all,
-  label = test_labels_full
-)
+stopifnot(nrow(data_model_train_full) > 0, nrow(data_model_test_full) > 0)
+stopifnot("delta_L_D_mean" %in% names(data_model_train_full))
+stopifnot("delta_L_D_mean" %in% names(data_model_test_full))
 
 
-# 2) Common XGB parameters
+cols_taps_only <- tap_cols
+cols_taps_aoa  <- c(tap_cols, "AoA")
+cols_taps_xyz  <- c(tap_cols, "XPos","YPos","ZPos")
+cols_all       <- c(tap_cols, "XPos","YPos","ZPos","AoA")
+
+forbidden_patterns <- c("^L_", "^D_", "CL", "CD", "L_D", "delta_L_D_mean")
+has_forbidden <- function(nms) length(grep(paste(forbidden_patterns, collapse="|"),
+                                           nms, ignore.case = TRUE, value = TRUE)) > 0
+stopifnot(!has_forbidden(cols_taps_only),
+          !has_forbidden(cols_taps_aoa),
+          !has_forbidden(cols_taps_xyz),
+          !has_forbidden(cols_all))
+
+make_mat <- function(df, cols) {
+  stopifnot(all(cols %in% names(df)))
+  as.matrix(df[, cols, drop = FALSE])
+}
+
+Xtr_with <- make_mat(data_model_train_full, cols_taps_aoa)
+Xte_with <- make_mat(data_model_test_full,  cols_taps_aoa)
+Xtr_without <- make_mat(data_model_train_full, cols_taps_only)
+Xte_without <- make_mat(data_model_test_full,  cols_taps_only)
+Xtr_XYZ <- make_mat(data_model_train_full, cols_taps_xyz)
+Xte_XYZ <- make_mat(data_model_test_full,  cols_taps_xyz)
+Xtr_all <- make_mat(data_model_train_full, cols_all)
+Xte_all <- make_mat(data_model_test_full,  cols_all)
+
+train_y <- data_model_train_full$delta_L_D_mean
+test_y  <- data_model_test_full$delta_L_D_mean
+
+# Guards
+stopifnot(!any(is.na(Xtr_with)), !any(is.na(Xte_with)))
+stopifnot(!any(is.na(Xtr_without)), !any(is.na(Xte_without)))
+stopifnot(!any(is.na(Xtr_XYZ)), !any(is.na(Xte_XYZ)))
+stopifnot(!any(is.na(Xtr_all)), !any(is.na(Xte_all)))
+stopifnot(!any(is.na(train_y)), !any(is.na(test_y)))
+
+# DMatrix objects
+dtr_with <- xgb.DMatrix(data = Xtr_with, label = train_y)
+dte_with <- xgb.DMatrix(data = Xte_with,  label = test_y)
+dtr_without<- xgb.DMatrix(data = Xtr_without, label = train_y)
+dte_without<- xgb.DMatrix(data = Xte_without, label = test_y)
+dtr_XYZ <- xgb.DMatrix(data = Xtr_XYZ, label = train_y)
+dte_XYZ <- xgb.DMatrix(data = Xte_XYZ, label = test_y)
+dtr_all <- xgb.DMatrix(data = Xtr_all, label = train_y)
+dte_all <- xgb.DMatrix(data = Xte_all, label = test_y)
+
+# Common XGB params & CV helper
 params <- list(
   objective        = "reg:squarederror",
-  eta              = 0.05,
+  eval_metric      = "rmse",
+  eta              = 0.06,
   max_depth        = 3,
-  subsample        = 0.8,
-  colsample_bytree = 0.8,
-  lambda           = 1,
+  subsample        = 0.5,
+  colsample_bytree = 0.5,
+  lambda           = 2,
   alpha            = 0
 )
 nrounds <- 2000
 early   <- 50
+nfold   <- 5
 
+# Funtion to run k-fold cross validation on XGBoost
+fit_cv_then_eval <- function(dtrain, dtest, params, nrounds, early, nfold) {
+  set.seed(123)
+  cv <- xgb.cv(
+    params = params,
+    data = dtrain,
+    nrounds = nrounds,
+    nfold = nfold,
+    early_stopping_rounds = early,
+    verbose = 0
+  )
+  best_n  <- cv$best_iteration
+  cv_rmse <- cv$evaluation_log$test_rmse_mean[best_n] 
+  model <- xgb.train(params = params, data = dtrain, nrounds = best_n, verbose = 0)
+  preds_test  <- predict(model, dtest)
 
-# 3) Train the four models
+  list(
+    model      = model,
+    best_n     = best_n,                             
+    rmse_train = cv_rmse,
+    rmse_test  = Metrics::rmse(getinfo(dtest,  "label"), preds_test)
+  )
+}
 
-# a) With AoA, no XYZ
-watchlist_with <- list(train = dtrain_with, test = dtest_with)
-Model_GB_with_AoA <- xgb.train(
-  params                = params,
-  data                  = dtrain_with,
-  nrounds               = nrounds,
-  watchlist             = watchlist_with,
-  early_stopping_rounds = early,
-  verbose               = 1
-)
+# Train 4 models
+res_with    <- fit_cv_then_eval(dtr_with,    dte_with,    params, nrounds, early, nfold)
+res_without <- fit_cv_then_eval(dtr_without, dte_without, params, nrounds, early, nfold)
+res_XYZ     <- fit_cv_then_eval(dtr_XYZ,     dte_XYZ,     params, nrounds, early, nfold)
+res_all     <- fit_cv_then_eval(dtr_all,     dte_all,     params, nrounds, early, nfold)
 
-# b) Without AoA, no XYZ
-watchlist_without <- list(train = dtrain_without, test = dtest_without)
-Model_GB_without_AoA <- xgb.train(
-  params                = params,
-  data                  = dtrain_without,
-  nrounds               = nrounds,
-  watchlist             = watchlist_without,
-  early_stopping_rounds = early,
-  verbose               = 1
-)
+# Summary
+cat("Model               | Best n | Train RMSE | Test RMSE\n")
+cat("--------------------|--------|------------|----------\n")
+cat(sprintf("Taps + AoA          | %6d |   %6.4f   |  %6.4f\n",
+            res_with$best_n,    res_with$rmse_train,    res_with$rmse_test))
+cat(sprintf("Taps only           | %6d |   %6.4f   |  %6.4f\n",
+            res_without$best_n, res_without$rmse_train, res_without$rmse_test))
+cat(sprintf("Taps + XYZ          | %6d |   %6.4f   |  %6.4f\n",
+            res_XYZ$best_n,     res_XYZ$rmse_train,     res_XYZ$rmse_test))
+cat(sprintf("Taps + AoA + XYZ    | %6d |   %6.4f   |  %6.4f\n",
+            res_all$best_n,     res_all$rmse_train,     res_all$rmse_test))
 
-# c) With XYZ, no AoA
-watchlist_XYZ <- list(train = dtrain_XYZ, test = dtest_XYZ)
-Model_GB_with_XYZ <- xgb.train(
-  params                = params,
-  data                  = dtrain_XYZ,
-  nrounds               = nrounds,
-  watchlist             = watchlist_XYZ,
-  early_stopping_rounds = early,
-  verbose               = 1
-)
+rmse_train_with <- res_with$rmse_train
+rmse_train_without <- res_without$rmse_train
+rmse_train_XYZ <- res_XYZ$rmse_train
+rmse_train_all <- res_all$rmse_train
 
-# d) With AoA and XYZ
-watchlist_all <- list(train = dtrain_all, test = dtest_all)
-Model_GB_with_AoA_XYZ <- xgb.train(
-  params                = params,
-  data                  = dtrain_all,
-  nrounds               = nrounds,
-  watchlist             = watchlist_all,
-  early_stopping_rounds = early,
-  verbose               = 1
-)
-
-
-# 4) Predictions & RMSE
-
-# a) With AoA, no XYZ
-pred_train_with    <- predict(Model_GB_with_AoA, train_matrix_full_with_AoA)
-pred_test_with     <- predict(Model_GB_with_AoA, test_matrix_full_with_AoA)
-rmse_train_with    <- rmse(train_labels_full, pred_train_with)
-rmse_test_with     <- rmse(test_labels_full,  pred_test_with)
-
-# b) Without AoA, no XYZ
-pred_train_without <- predict(Model_GB_without_AoA, train_matrix_full_without_AoA)
-pred_test_without  <- predict(Model_GB_without_AoA, test_matrix_full_without_AoA)
-rmse_train_without <- rmse(train_labels_full, pred_train_without)
-rmse_test_without  <- rmse(test_labels_full,  pred_test_without)
-
-# c) With XYZ, no AoA
-pred_train_XYZ     <- predict(Model_GB_with_XYZ, train_matrix_full_XYZ)
-pred_test_XYZ      <- predict(Model_GB_with_XYZ, test_matrix_full_XYZ)
-rmse_train_XYZ     <- rmse(train_labels_full, pred_train_XYZ)
-rmse_test_XYZ      <- rmse(test_labels_full,  pred_test_XYZ)
-
-# d) With AoA + XYZ
-pred_train_all     <- predict(Model_GB_with_AoA_XYZ, train_matrix_full_all)
-pred_test_all      <- predict(Model_GB_with_AoA_XYZ, test_matrix_full_all)
-rmse_train_all     <- rmse(train_labels_full, pred_train_all)
-rmse_test_all      <- rmse(test_labels_full,  pred_test_all)
-
-# --- 5) Print summary ---
-cat("Model               | Train RMSE | Test RMSE\n")
-cat("--------------------|------------|---------\n")
-cat(sprintf("Taps + AoA          |   %6.4f   |  %6.4f\n", rmse_train_with,    rmse_test_with))
-cat(sprintf("Taps only           |   %6.4f   |  %6.4f\n", rmse_train_without, rmse_test_without))
-cat(sprintf("Taps + XYZ          |   %6.4f   |  %6.4f\n", rmse_train_XYZ,     rmse_test_XYZ))
-cat(sprintf("Taps + AoA + XYZ    |   %6.4f   |  %6.4f\n", rmse_train_all,     rmse_test_all))
-
-
-
+rmse_test_with <- res_with$rmse_test
+rmse_test_without <- res_without$rmse_test
+rmse_test_XYZ <- res_XYZ$rmse_test
+rmse_test_all <- res_all$rmse_test
 ```
 
 # Plot performance between models
@@ -849,10 +700,10 @@ rmse_values <- tibble::tibble(
     stats_LM_without_AoA$rmse_train,
     stats_LM_without_AoA_with_XYZ$rmse_train,
     # RF
-    stats_RF_with_AoA$rmse_train,
-    stats_RF_with_AoA_XYZ$rmse_train,
-    stats_RF_without_AoA$rmse_train,
-    stats_RF_without_AoA_XYZ$rmse_train,
+    RF_res_taps_aoa$oob_rmse,
+    RF_res_all$oob_rmse,
+    RF_res_taps_only$oob_rmse,
+    RF_res_taps_xyz$oob_rmse,
     # XGBoost
     rmse_train_with,      # taps + AoA
     rmse_train_all,       # taps + AoA + XYZ
@@ -871,10 +722,10 @@ rmse_values <- tibble::tibble(
     stats_LM_without_AoA$rmse_test,
     stats_LM_without_AoA_with_XYZ$rmse_test,
     # RF
-    stats_RF_with_AoA$rmse_test,
-    stats_RF_with_AoA_XYZ$rmse_test,
-    stats_RF_without_AoA$rmse_test,
-    stats_RF_without_AoA_XYZ$rmse_test,
+    RF_res_taps_aoa$test_rmse,
+    RF_res_all$test_rmse,
+    RF_res_taps_only$test_rmse,
+    RF_res_taps_xyz$test_rmse,
     # XGBoost
     rmse_test_with,       # taps + AoA
     rmse_test_all,        # taps + AoA + XYZ
@@ -889,7 +740,6 @@ clean <- rmse_values %>%
   mutate(
     ModelType = str_replace(Model, "_.*$", ""),          # GAM / LM / RF / XGBoost
     GroupRaw  = str_replace(Model, "^[^_]+_", ""),       # with_AoA / with_AoA_XYZ / without_AoA / without_AoA_XYZ
-    # for historic compatibility; your strings already say "XGBoost_*"
     ModelType = recode(ModelType, GB = "XGBoost"),
     ID = case_when(
       ModelType == "GAM"     & GroupRaw == "with_AoA"        ~ "a",
@@ -929,7 +779,7 @@ long <- clean %>%
   select(ID, ModelType, Group, RMSE_Train, RMSE_Test) %>%
   pivot_longer(c(RMSE_Train, RMSE_Test),
                names_to = "Dataset", values_to = "RMSE") %>%
-  mutate(Dataset = recode(Dataset, RMSE_Train = "Train", RMSE_Test = "Test")) %>%
+  mutate(Dataset = recode(Dataset, RMSE_Train = "Iteration 0", RMSE_Test = "Iteration 1")) %>%
   arrange(ModelType, ID, Dataset)
 
 # --- plot ---

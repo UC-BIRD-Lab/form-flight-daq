@@ -152,7 +152,7 @@ def train_model(
     params.setdefault("eval_metric", "rmse")
     params.setdefault("seed", seed)
 
-    # --- 1) Cross-validation on TRAIN ONLY ---
+    # Cross-validation on TRAIN ONLY
     cv_hist = xgb.cv(
         params=params,
         dtrain=dtrain,
@@ -167,7 +167,7 @@ def train_model(
     best_rounds = len(cv_hist)  # early-stopped rounds
     best_cv_rmse = float(cv_hist["test-rmse-mean"].iloc[-1])
 
-    # --- 2) Train final model on ALL dtrain with best_rounds ---
+    # Train final model on ALL dtrain with best_rounds
     final_model = xgb.train(
         params=params,
         dtrain=dtrain,
@@ -175,7 +175,7 @@ def train_model(
         verbose_eval=False
     )
 
-    # --- 3) Predict ---
+    # Predict
     if is_interpolated:
         preds = final_model.predict(interpolated_test_Dmatrix_df)
         return {
