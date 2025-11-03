@@ -339,13 +339,13 @@ if __name__ == "__main__":
     data_path_individual = "MI_results/Individual_MI_results.csv"
     data_path_combination = "MI_results/Combination_MI_results.csv"
     output_folder = "MI_results/Plots"
-    # Plot 1: Individual MI Results
-    plot_individual_mi_results(data_path_individual, output_folder)
+    # # Plot 1: Individual MI Results
+    # plot_individual_mi_results(data_path_individual, output_folder)
 
     # Plot 2: Combination MI Results vs Number of Taps Used
     plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
 
-    # Plot 3: Combination MI Results Local Normalized Summed MI Values
-    plot_combination_mi_local_normalized(data_path_combination, output_folder)
+    # # Plot 3: Combination MI Results Local Normalized Summed MI Values
+    # plot_combination_mi_local_normalized(data_path_combination, output_folder)
 
 
