@@ -4,12 +4,11 @@ import numpy as np
 from matplotlib import colors as mcolors
 
 def create_horizontal_colorbar(colormap, cbar_min, cbar_max, label, filename, step):
-    # keep vmin < vmax; if reversed was given, swap and flip the cmap
     cmap = colormap
     vmin, vmax = cbar_min, cbar_max
     if vmin > vmax:
         vmin, vmax = vmax, vmin
-        cmap = colormap.reversed()
+        cmap = colormap
 
     # symmetric center at 0 if range crosses 0 
     if vmin < 0 < vmax:

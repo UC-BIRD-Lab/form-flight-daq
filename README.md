@@ -244,7 +244,7 @@ Generates plain text from model performance and optimized hyperparameters for di
 - **Converted (tared):** `Post_Data/.../Tared/`  
 - **Force coefficients:** `Post_processed_force_coefficient/Force_Coefficients_AoA_All.csv`  
 - **Meta summaries:** `Post_processed_stats_summarized/`
-  - `L_D_True_Stats_Iter_0.csv`, `L_D_True_Stats_Iter_2.csv`
+  - `L_D_True_Stats_Iter_0.csv`, `L_D_True_Stats_Iter_1.csv`
   - `Pressure_True_Stats_Iter_*.csv`
 - **MI:** `MI_results/` (+ plots in `MI_results/Plots/`)  
 - **Predictive model data:**  
