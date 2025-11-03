@@ -222,7 +222,7 @@ bin_plot <- ggplot(bin_results$results, aes(x = nbins, y = Mutual_Information)) 
 print(bin_plot)
 
 # Save plot to folder
-ggsave("MI_results/Plots/MI_Vs_bin_plot.pdf", plot = bin_plot, width = 6, height = 4, device = "pdf")
+ggsave("MI_results/Plots/SI_Figure_4_MI_Bin_plot.pdf", plot = bin_plot, width = 6, height = 4, device = "pdf")
 
 # --- Save CSV results to the same folder ---
 write.csv(MI_unranked_combo, "MI_results/Combination_MI_results.csv", row.names = FALSE)
