@@ -14,7 +14,7 @@ This repository contains all scripts used in the paper for:
 - Figure/plot generation
 - LaTeX table/text generation
 
-> **Reference data:** Figshare — **XXX PLACEHOLDER** (download all input data to run the code below)
+> **Reference data:** Figshare — `https://doi.org/10.6084/m9.figshare.c.8065798` (download all input data to same working directory of this code folder to run the code below)
 
 ---
 
@@ -46,7 +46,7 @@ Scripts for collecting wind-tunnel measurement data.
 **Output**
 - `Raw_Data/` containing all measured force and pressure data (available at **XXX figshare**)
 
-> To run the rest of the repository, download `Raw_Data` from **XXX** into the working directory.
+> To run the rest of the repository, download `Raw_Data` from `https://doi.org/10.6084/m9.figshare.c.8065798` into the working directory.
 
 ---
 
@@ -172,6 +172,7 @@ XGBoost-based predictive modeling and Bayesian hyperparameter optimization for f
 ### 8.3 `PredModel_final_train_and_test.py`
 - Loads optimized hyperparameters and performs final XGBoost training  
 - 6-fold CV, early stopping, multiple fixed seeds for robustness  
+- Trained with the best_round from 6-fold CV on iteration 0 dataset, and test on iteration 1 dataset.
 - **Inputs**
   - Same preprocessed CSVs as above  
   - Tuning CSVs from **8.1**  
