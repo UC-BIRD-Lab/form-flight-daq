@@ -206,7 +206,7 @@ def plot_combination_mi_local_normalized(data_path, output_folder):
 
         z_mi_values = (
             reshape_ranked_pressure_combinations_with_num_taps['Mutual_Information']
-            .to_numpy()  # <<< CHANGED: ensure NumPy for numeric indexing
+            .to_numpy() 
         )
 
         # Create an empty matrix to store the MI values for each tap combination, ensuring float data type
@@ -218,18 +218,18 @@ def plot_combination_mi_local_normalized(data_path, output_folder):
             for tap in taps:
                 if tap in xticks_index_map:
                     col_index = xticks_index_map[tap]
-                    empty_matrix[row_index, col_index] = z_mi_values[row_index]  # <<< CHANGED: z_mi_values is ndarray
+                    empty_matrix[row_index, col_index] = z_mi_values[row_index] 
 
         # Transpose the matrix to flip x and y axes
         flipped_matrix = empty_matrix.T
 
         # Calculate the total mutual information value (score) for each pressure tap
-        tap_scores = np.nansum(flipped_matrix, axis=1)  # Sum along each column, ignoring NaNs
+        tap_scores = np.nansum(flipped_matrix, axis=1) 
 
         # Normalize the scores
-        min_score, max_score = np.nanmin(tap_scores), np.nanmax(tap_scores)  # <<< CHANGED: np.nanmin/max for safety
+        min_score, max_score = np.nanmin(tap_scores), np.nanmax(tap_scores) 
         den = (max_score - min_score) 
-        normalized_tap_scores = (tap_scores - min_score) / den if den != 0 else np.zeros_like(tap_scores)  # <<< CHANGED
+        normalized_tap_scores = (tap_scores - min_score) / den if den != 0 else np.zeros_like(tap_scores)  
 
         # Add results to the combined DataFrame
         temp_df = pd.DataFrame({
@@ -329,8 +329,8 @@ def plot_combination_mi_local_normalized(data_path, output_folder):
     # Save the plot
     plt.rcParams['svg.fonttype'] = 'none'
     plt.savefig(f"{output_folder_norm}/Combined_Normalized_MI_Scatter.svg", format="svg", bbox_inches="tight", dpi = 600)
-    # plt.savefig(f"{output_folder_norm}/Combined_Normalized_MI_Scatter_{plot_until_number-1}.png", format="png", bbox_inches="tight", dpi = 1000)
-    # plt.savefig(f"{output_folder_norm}/Combined_Normalized_MI_Scatter_{plot_until_number-1}.svg", format="svg", bbox_inches="tight", dpi=1000)
+    plt.savefig(f"{output_folder_norm}/Combined_Normalized_MI_Scatter_{plot_until_number-1}.png", format="png", bbox_inches="tight", dpi = 1000)
+    plt.savefig(f"{output_folder_norm}/Combined_Normalized_MI_Scatter_{plot_until_number-1}.svg", format="svg", bbox_inches="tight", dpi=1000)
     plt.show()
 
 
@@ -340,12 +340,12 @@ if __name__ == "__main__":
     data_path_combination = "MI_results/Combination_MI_results.csv"
     output_folder = "MI_results/Plots"
     # # Plot 1: Individual MI Results
-    # plot_individual_mi_results(data_path_individual, output_folder)
+    plot_individual_mi_results(data_path_individual, output_folder)
 
     # Plot 2: Combination MI Results vs Number of Taps Used
     plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
 
     # # Plot 3: Combination MI Results Local Normalized Summed MI Values
-    # plot_combination_mi_local_normalized(data_path_combination, output_folder)
+    plot_combination_mi_local_normalized(data_path_combination, output_folder)
 
 

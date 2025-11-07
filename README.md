@@ -44,7 +44,7 @@ Scripts for collecting wind-tunnel measurement data.
 3. Ambient environmental conditions specified in `Testing_Day_Condition`
 
 **Output**
-- `Raw_Data/` containing all measured force and pressure data (available at **XXX figshare**)
+- `Raw_Data/` containing all measured force and pressure data (available at `https://doi.org/10.6084/m9.figshare.c.8065798`)
 
 > To run the rest of the repository, download `Raw_Data` from `https://doi.org/10.6084/m9.figshare.c.8065798` into the working directory.
 
@@ -241,7 +241,7 @@ Generates plain text from model performance and optimized hyperparameters for di
 ---
 
 ## Appendix B. Paths & Outputs Summary
-- **Raw data:** `Raw_Data/` (from Figshare **XXX**)  
+- **Raw data:** `Raw_Data/` (from Figshare `https://doi.org/10.6084/m9.figshare.c.8065798`)  
 - **Converted (tared):** `Post_Data/.../Tared/`  
 - **Force coefficients:** `Post_processed_force_coefficient/Force_Coefficients_AoA_All.csv`  
 - **Meta summaries:** `Post_processed_stats_summarized/`
