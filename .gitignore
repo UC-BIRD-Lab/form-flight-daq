@@ -1,0 +1,38 @@
+# --- Data directories ---
+/Post_Data/
+/Raw_data/
+/Post_processed_stats_summarized/
+/Post_processed_force_coefficient/
+/Polar_Plot/
+/MI_results/
+/Predictive_model_data/
+/Colorbars_for_Figures/
+
+# Keep placeholders / docs inside ignored dirs
+!/Post_Data/.gitkeep
+!/Post_Data/README.md
+!/Raw_data/.gitkeep
+!/Raw_data/README.md
+
+# --- Python build/bytecode ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+build/
+dist/
+
+# --- Environments ---
+.venv/
+.env
+.env.*
+
+# --- Tooling ---
+.python-version
+.vscode/
+.idea/
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
