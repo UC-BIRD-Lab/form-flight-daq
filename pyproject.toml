@@ -1,0 +1,15 @@
+[project]
+name = "form-flight-daq"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "bayesianoptimization>=0.0.0",
+    "matplotlib>=3.9.4",
+    "pandas>=2.3.3",
+    "scipy>=1.13.1",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.14.5",
+    "xgboost>=2.1.4",
+]

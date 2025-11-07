@@ -1,0 +1,255 @@
+# ======================================================================
+# Script Name:   MI_implementation.R
+# Author:        Huanglun (Adam) Zhu
+# Affiliation:   UC Davis - Biologically Informed Research and Design (BIRD) Lab
+# Date:          2025-10-27
+#
+# Description:
+#   This script calculates and visualizes Mutual Information (MI) metrics
+#   for individual and combined pressure taps in formation flight experiments.
+#   It includes:
+#     - MI vs. Number of Bins plot
+#     - CSV export of ranked and unranked MI results
+#     - Organized output folder ("MI_results") for all plots and data
+#
+# Output:
+#   Folder: MI_results/
+#     - MI_Vs_bin_plot.pdf
+#     - Combination_MI_results.csv
+#     - Combination_MI_results_ranked.csv
+#     - Individual_MI_results.csv
+#     - Individual_MI_results_ranked.csv
+#
+# ======================================================================
+
+
+# Information Theory Application
+library(infotheo)
+library(ggplot2)
+
+# Import CSV files
+L_D_iter_0 <- read.csv("Post_processed_stats_summarized/L_D_True_Stats_Iter_0.csv", TRUE, ",")
+L_D_iter_1 <- read.csv("Post_processed_stats_summarized/L_D_True_Stats_Iter_1.csv", TRUE, ",")
+pressure_iter_0 <- read.csv("Post_processed_stats_summarized/Pressure_True_Stats_Iter_0.csv", TRUE, ",")
+pressure_iter_1 <- read.csv("Post_processed_stats_summarized/Pressure_True_Stats_Iter_1.csv", TRUE, ",")
+
+# Reoriented data structure for apply information theory
+#--------------------------------------------------------
+# Define upper tap column name in the csv file with delta pressure mean information
+upper_taps <- c(
+  "tap0_delta_pressure_mean",   # Tap 1
+  "tap2_delta_pressure_mean",   # Tap 3
+  "tap4_delta_pressure_mean",   # Tap 5
+  "tap6_delta_pressure_mean",   # Tap 7
+  "tap8_delta_pressure_mean",   # Tap 9
+  "tap9_delta_pressure_mean",   # Tap 10
+  "tap10_delta_pressure_mean",  # Tap 11
+  "tap11_delta_pressure_mean",  # Tap 12
+  "tap13_delta_pressure_mean",  # Tap 14
+  "tap15_delta_pressure_mean",  # Tap 16
+  "tap17_delta_pressure_mean",  # Tap 18
+  "tap19_delta_pressure_mean"   # Tap 20
+)
+pressure_labels <- c("19", "17", "15", "13", "11", "10", "9", "8", "6", "4", "2", "0")
+
+
+# Sort the subset data of upper taps only from the original csv file
+pressure_selected <- pressure_iter_0[, upper_taps]
+# Get delta_L_D value
+delta_L_D <- L_D_iter_0$delta_L_D_mean
+
+# [Function] Nbins selection
+#--------------------------------------------------------
+# Trying to find when number of bins increase MI value will be at plateau or inflection Point
+compute_MI_vs_nbins <- function(pressure_data, delta_L_D_data, bin_range = seq(10, 80, by = 1)) {
+  
+  # Initialize a vector to store MI values
+  mi_values <- numeric(length(bin_range))
+  
+  for (i in seq_along(bin_range)) {
+    nbin <- bin_range[i]
+    
+    # Discretize the data
+    pressure_disc <- discretize(pressure_data, disc = "equalfreq", nbins = nbin)
+    L_D_disc <- discretize(delta_L_D_data, disc = "equalfreq", nbins = nbin)
+    
+    # Compute mutual information
+    mi_values[i] <- mutinformation(pressure_disc, L_D_disc)
+  }
+  
+  # Combine results into a data frame
+  mi_nbins_results <- data.frame(
+    nbins = bin_range,
+    Mutual_Information = mi_values
+  )
+  
+  # Find the first decreasing MI point
+  stop_nbin <- bin_range[length(bin_range)]  # Default to max bin_range if no decrease is found
+  for (i in 2:length(mi_values)) {
+    if (mi_values[i] < mi_values[i - 1]) {
+      stop_nbin <- bin_range[i - 1]  # Store the last increasing bin
+      break
+    }
+  }
+  
+  # Print the results
+  print(mi_nbins_results)
+  cat("\nSelected optimal number of bins:", stop_nbin, "\n")
+  
+  return(list(results = mi_nbins_results, optimal_bins = stop_nbin))
+}
+
+# [Function] Mutual information theory for individual tap
+#--------------------------------------------------------
+# Applying information theory with mutual information(MI) using Equalfrequency
+# EqualFreq: each bin has Appx same observations. Good for skewed data or outliers
+# EqualWidth: divide range of data into bins of equal width. Good for uniform distribution data
+#--------------------------------------------------------
+compute_MI_per_tap <- function(pressure_data, delta_L_D, upper_taps, nbins) {
+  # Initialize empty vector
+  MI_values <- numeric(length(upper_taps))
+  
+  # Loop each pressure tap
+  for (i in seq_along(upper_taps)) {
+    pressure_tap_i <- pressure_data[[upper_taps[i]]]  
+    
+    # Discretize pressure data and delta_L_D
+    pressure_bin <- discretize(pressure_tap_i, disc = "equalfreq", nbins = nbins)
+    L_D_bin <- discretize(delta_L_D, disc = "equalfreq", nbins = nbins)
+    
+    # Compute mutual information
+    MI_values[i] <- mutinformation(pressure_bin, L_D_bin)
+  }
+  
+  # Unranked MI results
+  MI_results <- data.frame(
+    Pressure_Tap = upper_taps,
+    Mutual_Information_Result = MI_values
+  )
+  
+  # Ranked MI results
+  MI_results_ranked <- MI_results[order(-MI_results$Mutual_Information_Result), ]
+  
+  return(list(
+    MI_results_individual = MI_results,  
+    MI_results_individual_ranked = MI_results_ranked  
+  ))
+}
+
+# [Function] Mutual information theory for tap combination
+#-------------------------------------
+compute_MI_for_combinations <- function(pressure_data, delta_L_D, upper_taps, nbins , max_combination_size = length(upper_taps)) {
+  
+  # Discretize delta_L_D once
+  delta_L_D_bin <- discretize(delta_L_D, disc = "equalfreq", nbins = nbins)
+  
+  # Generate all possible combinations of pressure taps
+  all_combinations <- list()
+  
+  for (i in 1:max_combination_size) {
+    combination_list <- combn(upper_taps, i, simplify = FALSE)  
+    all_combinations <- c(all_combinations, combination_list)  
+  }
+  
+  # Initialize a vector to store MI values
+  MI_values <- numeric(length(all_combinations))
+  
+  # Loop through each combination
+  for (j in seq_along(all_combinations)) {
+    combo_taps <- all_combinations[[j]]
+    pressure_combo <- pressure_data[, combo_taps, drop = FALSE]
+    
+    if (length(combo_taps) == 1) {
+      pressure_bin <- discretize(pressure_combo[[1]], disc = "equalfreq", nbins = nbins)
+      MI_values[j] <- mutinformation(pressure_bin, delta_L_D_bin)
+    } else {
+      pressure_combo_bin <- lapply(pressure_combo, function(x) discretize(x, disc = "equalfreq", nbins = nbins))
+      pressure_combo_bin_df <- as.data.frame(pressure_combo_bin)
+      MI_values[j] <- mutinformation(pressure_combo_bin_df, delta_L_D_bin)
+    }
+  }
+  
+  # Unranked results
+  MI_results_unranked <- data.frame(
+    Combination = sapply(all_combinations, paste, collapse = ", "),
+    Mutual_Information = MI_values
+  )
+  
+  # Ranked results
+  MI_results_ranked <- MI_results_unranked[order(-MI_results_unranked$Mutual_Information), ]
+  
+  return(list(
+    ranked_MI = MI_results_ranked, 
+    unranked_MI = MI_results_unranked
+  ))
+}
+
+
+# Main Code
+#------------------------------------------------------------------------------
+# Calculating solution
+bin_results <- compute_MI_vs_nbins(pressure_selected, delta_L_D)
+MI_results_individual <- compute_MI_per_tap(pressure_selected, delta_L_D, upper_taps, nbins = bin_results$optimal_bins)
+MI_results_combination <- compute_MI_for_combinations(pressure_selected, delta_L_D, upper_taps, nbins = bin_results$optimal_bins)
+# Extract data
+MI_unranked_individual <- MI_results_individual$MI_results_individual
+MI_ranked_individual <- MI_results_individual$MI_results_individual_ranked
+MI_unranked_combo <- MI_results_combination$unranked_MI
+MI_ranked_combo <- MI_results_combination$ranked_MI
+
+
+# Create folder if it doesn't exist
+if (!dir.exists("MI_results")) {
+  dir.create("MI_results")
+}
+if (!dir.exists("MI_results/Plots")) {
+  dir.create("MI_results/Plots")
+}
+# 
+# --- Plot MI vs. Number of Bins ---
+bin_plot <- ggplot(bin_results$results, aes(x = nbins, y = Mutual_Information)) +
+  geom_line() +
+  geom_point() +
+  geom_vline(xintercept = bin_results$optimal_bins, linetype = "dashed", color = "red") +
+  scale_x_continuous(breaks = seq(min(bin_results$results$nbins),
+                                  max(bin_results$results$nbins),
+                                  by = 5)) +
+  labs(title = "MI vs. Number of Bins",
+       x = "Number of Bins",
+       y = "Mutual Information") +
+  theme_classic()
+
+print(bin_plot)
+
+# Save plot to folder
+ggsave("MI_results/Plots/SI_Figure_4_MI_Bin_plot.pdf", plot = bin_plot, width = 6, height = 4, device = "pdf")
+
+# --- Save CSV results to the same folder ---
+write.csv(MI_unranked_combo, "MI_results/Combination_MI_results.csv", row.names = FALSE)
+write.csv(MI_ranked_combo, "MI_results/Combination_MI_results_ranked.csv", row.names = FALSE)
+write.csv(MI_unranked_individual, "MI_results/Individual_MI_results.csv", row.names = FALSE)
+write.csv(MI_ranked_individual, "MI_results/Individual_MI_results_ranked.csv", row.names = FALSE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
