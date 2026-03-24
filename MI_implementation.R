@@ -217,7 +217,11 @@ bin_plot <- ggplot(bin_results$results, aes(x = nbins, y = Mutual_Information)) 
   labs(title = "MI vs. Number of Bins",
        x = "Number of Bins",
        y = "Mutual Information") +
-  theme_classic()
+  theme_classic()+
+  theme(
+    panel.grid.major = element_line(color = "grey80", linewidth = 0.5),
+    panel.grid.minor = element_line(color = "grey90", linewidth = 0.25)
+  )
 
 print(bin_plot)
 
@@ -229,6 +233,87 @@ write.csv(MI_unranked_combo, "MI_results/Combination_MI_results.csv", row.names 
 write.csv(MI_ranked_combo, "MI_results/Combination_MI_results_ranked.csv", row.names = FALSE)
 write.csv(MI_unranked_individual, "MI_results/Individual_MI_results.csv", row.names = FALSE)
 write.csv(MI_ranked_individual, "MI_results/Individual_MI_results_ranked.csv", row.names = FALSE)
+
+
+
+
+# --- Sensitivity check ---
+# Check with bin choose with 
+bins_check <- seq(20, 32,
+                  by = 1)
+
+sensitivity_results <- data.frame(
+  Bins = bins_check,
+  MI_Combo = NA,
+  MI_Individual = NA
+)
+
+for (i in seq_along(bins_check)) {
+  b <- bins_check[i]
+  
+  MI_results_individual <- compute_MI_per_tap(
+    pressure_selected,
+    delta_L_D,
+    upper_taps,
+    nbins = b
+  )
+  
+  MI_results_combination <- compute_MI_for_combinations(
+    pressure_selected,
+    delta_L_D,
+    upper_taps,
+    nbins = b
+  )
+  
+  MI_unranked_individual <- MI_results_individual$MI_results_individual
+  MI_ranked_individual   <- MI_results_individual$MI_results_individual_ranked
+  
+  MI_unranked_combo <- MI_results_combination$unranked_MI
+  MI_ranked_combo   <- MI_results_combination$ranked_MI
+  
+  assign(paste0("MI_result_individual_unranked_", b), MI_unranked_individual)
+  assign(paste0("MI_result_individual_ranked_", b), MI_ranked_individual)
+  assign(paste0("MI_result_combo_unranked_", b), MI_unranked_combo)
+  assign(paste0("MI_result_combo_ranked_", b), MI_ranked_combo)
+  
+  write.csv(
+    MI_unranked_combo,
+    paste0("MI_results/bin_", b, "_combo_unranked.csv"),
+    row.names = FALSE
+  )
+  
+  write.csv(
+    MI_ranked_combo,
+    paste0("MI_results/bin_", b, "_combo_ranked.csv"),
+    row.names = FALSE
+  )
+  
+  write.csv(
+    MI_unranked_individual,
+    paste0("MI_results/bin_", b, "_individual_unranked.csv"),
+    row.names = FALSE
+  )
+  
+  write.csv(
+    MI_ranked_individual,
+    paste0("MI_results/bin_", b, "_individual_ranked.csv"),
+    row.names = FALSE
+  )
+  
+  sensitivity_results$MI_Combo[i] <- MI_ranked_combo$Mutual_Information[1]
+  sensitivity_results$MI_Individual[i] <- MI_ranked_individual$Mutual_Information[1]
+}
+
+write.csv(
+  sensitivity_results,
+  "MI_results/MI_sensitivity_summary.csv",
+  row.names = FALSE
+)
+
+
+
+
+
 
 
 

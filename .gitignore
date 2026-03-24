@@ -7,6 +7,7 @@
 /MI_results/
 /Predictive_model_data/
 /Colorbars_for_Figures/
+/Output_data.zip
 
 # Keep placeholders / docs inside ignored dirs
 !/Post_Data/.gitkeep

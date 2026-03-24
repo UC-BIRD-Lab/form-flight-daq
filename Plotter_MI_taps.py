@@ -268,7 +268,9 @@ def plot_combination_mi_local_normalized(data_path, output_folder):
     custom_cmap = mcolors.ListedColormap(colors, name = 'PurGold')
 
 
-    plt.cm.register_cmap(name='PurGold', cmap=custom_cmap)
+    import matplotlib
+    if 'PurGold' not in matplotlib.colormaps:
+        matplotlib.colormaps.register(cmap=custom_cmap, name='PurGold')
     colormap = plt.cm.get_cmap('PurGold')
     colormap_code = 'PurGold'
 
@@ -347,5 +349,18 @@ if __name__ == "__main__":
 
     # # Plot 3: Combination MI Results Local Normalized Summed MI Values
     plot_combination_mi_local_normalized(data_path_combination, output_folder)
+
+    # Additional plots for sensitivity analysis can be added here as needed, following similar patterns of data processing and visualization.
+    # bins from 20 to 32 with step of 3
+    for bin_num in range(20, 33, 1):
+        data_path_individual = f"MI_results/bin_{bin_num}_individual_unranked.csv"
+        data_path_combination = f"MI_results/bin_{bin_num}_combo_unranked.csv"
+        output_folder = f"MI_results/Plots/Sensitivity_Analysis/bin_{bin_num}"
+        # Plot 1: Individual MI Results
+        plot_individual_mi_results(data_path_individual, output_folder)
+        # Plot 2: Combination MI Results vs Number of Taps Used
+        plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
+        # Plot 3: Combination MI Results Local Normalized Summed MI Values
+        plot_combination_mi_local_normalized(data_path_combination, output_folder)
 
 
