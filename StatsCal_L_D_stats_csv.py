@@ -281,13 +281,19 @@ def process_csv_file_to_L_D(testdate, csv_file, empty_matrix, xpos, Iter):
                                'Drag Std': pure_drag_force_std,
                                'L/D Mean': L_D_mean,
                                'L/D True Error': L_D_true_error,
-                               'L/D std': L_D_std, 
+                               'L/D std': L_D_std,
+                               'Sting Lift Mean': sting_lift_force_mean,
+                               'Sting Lift True Error': sting_lift_force_error,
+                               'Sting Lift Std': sting_lift_force_std,
+                               'Sting Drag Mean': sting_drag_force_mean,
+                               'Sting Drag True Error': sting_drag_force_error,
+                               'Sting Drag Std': sting_drag_force_std,
                                'Self_L/D_mean':self_L_D_mean,
                                'Self_L/D_error':self_L_D_error,
                                'Self_L/D_std':self_L_D_std,
                                'delta_L_D_mean':delta_L_D_mean,
                                'delta_L_D_error':delta_L_D_error,
-                               'delta_L_D_std':delta_L_D_std},    
+                               'delta_L_D_std':delta_L_D_std},
                                index = [0])
 
     # Save the statistics to a new CSV file
