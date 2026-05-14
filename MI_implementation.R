@@ -55,8 +55,10 @@ pressure_labels <- c("19", "17", "15", "13", "11", "10", "9", "8", "6", "4", "2"
 
 # Sort the subset data of upper taps only from the original csv file
 pressure_selected <- pressure_iter_0[, upper_taps]
+pressure_selected_iter_1 <- pressure_iter_1[, upper_taps]
 # Get delta_L_D value
 delta_L_D <- L_D_iter_0$delta_L_D_mean
+delta_L_D_iter_1 <- L_D_iter_1$delta_L_D_mean
 
 # [Function] Nbins selection
 #--------------------------------------------------------
@@ -187,6 +189,8 @@ compute_MI_for_combinations <- function(pressure_data, delta_L_D, upper_taps, nb
 
 # Main Code
 #------------------------------------------------------------------------------
+# For iter0
+#------------------------------------------------------------------------------
 # Calculating solution
 bin_results <- compute_MI_vs_nbins(pressure_selected, delta_L_D)
 MI_results_individual <- compute_MI_per_tap(pressure_selected, delta_L_D, upper_taps, nbins = bin_results$optimal_bins)
@@ -239,7 +243,7 @@ write.csv(MI_ranked_individual, "MI_results/Individual_MI_results_ranked.csv", r
 
 # --- Sensitivity check ---
 # Check with bin choose with 
-bins_check <- seq(20, 32,
+bins_check <- seq(10, 32,
                   by = 1)
 
 sensitivity_results <- data.frame(
@@ -309,16 +313,254 @@ write.csv(
   "MI_results/MI_sensitivity_summary.csv",
   row.names = FALSE
 )
+#------------------------------------------------------------------------------
+
+
+# Iter1
+#------------------------------------------------------------------------------
+
+bin_results_iter1 <- compute_MI_vs_nbins(
+  pressure_selected_iter_1,
+  delta_L_D_iter_1
+)
+
+MI_results_individual_iter1 <- compute_MI_per_tap(
+  pressure_selected_iter_1,
+  delta_L_D_iter_1,
+  upper_taps,
+  nbins = bin_results_iter1$optimal_bins
+)
+
+MI_results_combination_iter1 <- compute_MI_for_combinations(
+  pressure_selected_iter_1,
+  delta_L_D_iter_1,
+  upper_taps,
+  nbins = bin_results_iter1$optimal_bins
+)
+
+# Extract data
+MI_unranked_individual_iter1 <- MI_results_individual_iter1$MI_results_individual
+MI_ranked_individual_iter1   <- MI_results_individual_iter1$MI_results_individual_ranked
+MI_unranked_combo_iter1      <- MI_results_combination_iter1$unranked_MI
+MI_ranked_combo_iter1        <- MI_results_combination_iter1$ranked_MI
+
+
+# Create folder if it doesn't exist
+if (!dir.exists("MI_results_iter1")) {
+  dir.create("MI_results_iter1")
+}
+if (!dir.exists("MI_results_iter1/Plots")) {
+  dir.create("MI_results_iter1/Plots")
+}
+
+# --- Plot MI vs. Number of Bins ---
+bin_plot_iter1 <- ggplot(bin_results_iter1$results, aes(x = nbins, y = Mutual_Information)) +
+  geom_line() +
+  geom_point() +
+  geom_vline(
+    xintercept = bin_results_iter1$optimal_bins,
+    linetype = "dashed",
+    color = "red"
+  ) +
+  scale_x_continuous(
+    breaks = seq(
+      min(bin_results_iter1$results$nbins),
+      max(bin_results_iter1$results$nbins),
+      by = 5
+    )
+  ) +
+  labs(
+    title = "MI vs. Number of Bins (Iter 1)",
+    x = "Number of Bins",
+    y = "Mutual Information"
+  ) +
+  theme_classic() +
+  theme(
+    panel.grid.major = element_line(color = "grey80", linewidth = 0.5),
+    panel.grid.minor = element_line(color = "grey90", linewidth = 0.25)
+  )
+
+print(bin_plot_iter1)
+
+# Save plot to folder
+ggsave(
+  "MI_results_iter1/Plots/SI_Figure_4_MI_Bin_plot_iter1.pdf",
+  plot = bin_plot_iter1,
+  width = 6,
+  height = 4,
+  device = "pdf"
+)
+
+# --- Save CSV results to the same folder ---
+write.csv(
+  MI_unranked_combo_iter1,
+  "MI_results_iter1/Combination_MI_results_iter1.csv",
+  row.names = FALSE
+)
+
+write.csv(
+  MI_ranked_combo_iter1,
+  "MI_results_iter1/Combination_MI_results_ranked_iter1.csv",
+  row.names = FALSE
+)
+
+write.csv(
+  MI_unranked_individual_iter1,
+  "MI_results_iter1/Individual_MI_results_iter1.csv",
+  row.names = FALSE
+)
+
+write.csv(
+  MI_ranked_individual_iter1,
+  "MI_results_iter1/Individual_MI_results_ranked_iter1.csv",
+  row.names = FALSE
+)
+
+
+# --- Sensitivity check ---
+bins_check_iter1 <- seq(10, 32, by = 1)
+
+sensitivity_results_iter1 <- data.frame(
+  Bins = bins_check_iter1,
+  MI_Combo = NA,
+  MI_Individual = NA
+)
+
+for (i in seq_along(bins_check_iter1)) {
+  b <- bins_check_iter1[i]
+  
+  MI_results_individual_iter1_temp <- compute_MI_per_tap(
+    pressure_selected_iter_1,
+    delta_L_D_iter_1,
+    upper_taps,
+    nbins = b
+  )
+  
+  MI_results_combination_iter1_temp <- compute_MI_for_combinations(
+    pressure_selected_iter_1,
+    delta_L_D_iter_1,
+    upper_taps,
+    nbins = b
+  )
+  
+  MI_unranked_individual_iter1_temp <- MI_results_individual_iter1_temp$MI_results_individual
+  MI_ranked_individual_iter1_temp   <- MI_results_individual_iter1_temp$MI_results_individual_ranked
+  
+  MI_unranked_combo_iter1_temp <- MI_results_combination_iter1_temp$unranked_MI
+  MI_ranked_combo_iter1_temp   <- MI_results_combination_iter1_temp$ranked_MI
+  
+  assign(
+    paste0("MI_result_individual_unranked_iter1_", b),
+    MI_unranked_individual_iter1_temp
+  )
+  assign(
+    paste0("MI_result_individual_ranked_iter1_", b),
+    MI_ranked_individual_iter1_temp
+  )
+  assign(
+    paste0("MI_result_combo_unranked_iter1_", b),
+    MI_unranked_combo_iter1_temp
+  )
+  assign(
+    paste0("MI_result_combo_ranked_iter1_", b),
+    MI_ranked_combo_iter1_temp
+  )
+  
+  write.csv(
+    MI_unranked_combo_iter1_temp,
+    paste0("MI_results_iter1/bin_", b, "_combo_unranked_iter1.csv"),
+    row.names = FALSE
+  )
+  
+  write.csv(
+    MI_ranked_combo_iter1_temp,
+    paste0("MI_results_iter1/bin_", b, "_combo_ranked_iter1.csv"),
+    row.names = FALSE
+  )
+  
+  write.csv(
+    MI_unranked_individual_iter1_temp,
+    paste0("MI_results_iter1/bin_", b, "_individual_unranked_iter1.csv"),
+    row.names = FALSE
+  )
+  
+  write.csv(
+    MI_ranked_individual_iter1_temp,
+    paste0("MI_results_iter1/bin_", b, "_individual_ranked_iter1.csv"),
+    row.names = FALSE
+  )
+  
+  sensitivity_results_iter1$MI_Combo[i] <-
+    MI_ranked_combo_iter1_temp$Mutual_Information[1]
+  
+  sensitivity_results_iter1$MI_Individual[i] <-
+    MI_ranked_individual_iter1_temp$Mutual_Information[1]
+}
+
+write.csv(
+  sensitivity_results_iter1,
+  "MI_results_iter1/MI_sensitivity_summary_iter1.csv",
+  row.names = FALSE
+)
 
 
 
 
+bin_plot_comp <- ggplot() +
+  geom_line(
+    data = bin_results$results,
+    aes(x = nbins, y = Mutual_Information, color = "Iter 0")
+  ) +
+  geom_point(
+    data = bin_results$results,
+    aes(x = nbins, y = Mutual_Information, color = "Iter 0")
+  ) +
+  geom_line(
+    data = bin_results_iter1$results,
+    aes(x = nbins, y = Mutual_Information, color = "Iter 1")
+  ) +
+  geom_point(
+    data = bin_results_iter1$results,
+    aes(x = nbins, y = Mutual_Information, color = "Iter 1")
+  ) +
+  geom_vline(
+    xintercept = bin_results$optimal_bins,
+    linetype = "dashed",
+    color = "blue"
+  ) +
+  geom_vline(
+    xintercept = bin_results_iter1$optimal_bins,
+    linetype = "dashed",
+    color = "red"
+  ) +
+  scale_x_continuous(
+    breaks = seq(
+      min(c(bin_results$results$nbins, bin_results_iter1$results$nbins)),
+      max(c(bin_results$results$nbins, bin_results_iter1$results$nbins)),
+      by = 5
+    )
+  ) +
+  labs(
+    title = "MI vs. Number of Bins Comparison",
+    x = "Number of Bins",
+    y = "Mutual Information",
+    color = "Dataset"
+  ) +
+  theme_classic() +
+  theme(
+    panel.grid.major = element_line(color = "grey80", linewidth = 0.5),
+    panel.grid.minor = element_line(color = "grey90", linewidth = 0.25)
+  )
 
+print(bin_plot_comp)
 
-
-
-
-
+ggsave(
+  "MI_results_iter1/Plots/Iter0vsIter1.pdf",
+  plot = bin_plot_comp,
+  width = 6,
+  height = 4,
+  device = "pdf"
+)
 
 
 
