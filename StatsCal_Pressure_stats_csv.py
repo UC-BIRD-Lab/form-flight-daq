@@ -223,6 +223,7 @@ def process_csv_files_in_folder(testdate, folder, empty_matrix, xpos, Iter):
 if __name__ == "__main__":
     # Get the list of all CSV files in the folder
     # --------------------------------------------
+    baseline_self_stats_list = []
     for AoA in ['0', '2_5', '5']:
         # Pure Pressure value for the given AoA from processed polar data.
         # ---------------- -----------------------------------------------
@@ -263,6 +264,10 @@ if __name__ == "__main__":
 
         self_pressure_stats = calculate_self_pressure_stats(AoA)
 
+        self_stats_save = self_pressure_stats.reset_index().rename(columns={'index': 'tap'})
+        self_stats_save.insert(0, 'AoA', AoA)
+        baseline_self_stats_list.append(self_stats_save)
+
         # Process all CSV files in the folder to matrix
         # -----------------------------------
         # X_0 ; Iteration 0
@@ -295,3 +300,8 @@ if __name__ == "__main__":
         # -----------------
         X_2_folder_path_Iter_1 = f'Post_Data/Position/Tared/Taps/X_2/Iter_1_{X_2_Test_date_2}/AoA_{AoA}/'
         X_2_pressure_matrix_Iter_1 = process_csv_files_in_folder(X_2_Test_date_2, X_2_folder_path_Iter_1, X_2_empty_matrix_Iter_1, xpos = 2, Iter=1)
+
+    baseline_self_df = pd.concat(baseline_self_stats_list, ignore_index=True)
+    os.makedirs('Post_processed_stats_summarized', exist_ok=True)
+    baseline_self_df.to_csv('Post_processed_stats_summarized/Baseline_Pressure_Self_Stats.csv', index=False)
+    print("Saved: Post_processed_stats_summarized/Baseline_Pressure_Self_Stats.csv")
