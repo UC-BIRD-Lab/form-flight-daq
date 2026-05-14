@@ -93,7 +93,7 @@ def plot_grouped_nested_cv_heatmap(summary_df, save_folder_path, file_name="Heat
 
 
 if __name__ == "__main__":
-    folder_path = "Predictive_model_data/Grouped_Nested_CV_XGB"
+    folder_path = "Predictive_model_data/Resulting_plots_tables/Grouped_Nested_CV_XGB"
     summary_df = collect_grouped_nested_cv_summary_info(folder_path)
     print(summary_df)
     plot_grouped_nested_cv_heatmap(summary_df, folder_path)
