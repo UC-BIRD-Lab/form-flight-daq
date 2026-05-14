@@ -186,11 +186,9 @@ def split_iter0_iter1_data(dataframe, iteration_col="Iteration", iter0_value=0, 
     return iter0_df, iter1_df
 
 
-def select_median_xgb_model(xgb_results_csv):
+def select_first_xgb_model(xgb_results_csv):
     results_df = pd.read_csv(xgb_results_csv)
-    median_rmse = results_df["rmse"].median()
-    median_idx = (results_df["rmse"] - median_rmse).abs().idxmin()
-    selected_row = results_df.loc[median_idx]
+    selected_row = results_df.iloc[0]
     return {
         "selected_seed": selected_row["seed"],
         "selected_rmse": selected_row["rmse"],
@@ -325,7 +323,7 @@ def benchmark_xgb_predictor_set(
     if not os.path.exists(robustness_results_csv):
         return None
 
-    selection_info = select_median_xgb_model(robustness_results_csv)
+    selection_info = select_first_xgb_model(robustness_results_csv)
     xgb_model = load_xgb_model(selection_info["saved_model_path"])
 
     X_test = iter1_df[predictor_cols].to_numpy()
