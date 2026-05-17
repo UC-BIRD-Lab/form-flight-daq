@@ -90,27 +90,6 @@ def load_xgb_outer_fold_rmse():
         rows.append(row)
     return pd.DataFrame(rows) if rows else None
 
-
-def load_simple_model_all():
-    dfs = []
-    if not os.path.exists(simple_model_dir):
-        return None
-    for fname in os.listdir(simple_model_dir):
-        if not (fname.startswith("Outer_fold_results_") and fname.endswith(".csv")):
-            continue
-        stem = fname[len("Outer_fold_results_"):-4]
-        for model_name in simple_model_names:
-            safe = sanitize_name(model_name)
-            if stem.startswith(safe + "_"):
-                predictor_set = stem[len(safe) + 1:]
-                df = pd.read_csv(os.path.join(simple_model_dir, fname))
-                df["model_name"] = model_name
-                df["predictor_set_name"] = predictor_set
-                dfs.append(df)
-                break
-    return pd.concat(dfs, ignore_index=True) if dfs else None
-
-
 # ---------------------------------------------------------------------------
 # Table S2: XGBoost grouped nested CV performance (per predictor set)
 # ---------------------------------------------------------------------------
@@ -336,6 +315,141 @@ def write_latency_latex(rows):
 
 
 # ---------------------------------------------------------------------------
+# Table S5: Model comparison across predictor sets (pressure trend across models)
+# ---------------------------------------------------------------------------
+
+comparison_set_order = [
+    "Pressure_0_Position_XPos_YPos_ZPos",
+    "Pressure_2_Position_XPos_YPos_ZPos",
+    "Pressure_6_Position_XPos_YPos_ZPos",
+    "Pressure_12_Position_XPos_YPos_ZPos",
+]
+
+comparison_set_labels = {
+    "Pressure_0_Position_XPos_YPos_ZPos":  "XYZ only",
+    "Pressure_2_Position_XPos_YPos_ZPos":  "2P+XYZ",
+    "Pressure_6_Position_XPos_YPos_ZPos":  "6P+XYZ",
+    "Pressure_12_Position_XPos_YPos_ZPos": "12P+XYZ",
+}
+
+model_order_comparison = [
+    "LinearRegression", "RidgeRegression", "LassoRegression", "PLSRegression", "XGBoost"
+]
+
+
+def load_comparison_data():
+    """Return {model_name: {raw_predictor_set: (mean_rmse, std_rmse)}}."""
+    data = {m: {} for m in model_order_comparison}
+
+    # Simple models
+    if os.path.exists(simple_model_dir):
+        for fname in os.listdir(simple_model_dir):
+            if not (fname.startswith("Outer_fold_results_") and fname.endswith(".csv")):
+                continue
+            stem = fname[len("Outer_fold_results_"):-4]
+            for model_name in simple_model_names:
+                safe = sanitize_name(model_name)
+                if stem.startswith(safe + "_"):
+                    raw_ps = stem[len(safe) + 1:]
+                    if raw_ps in comparison_set_order:
+                        df = pd.read_csv(os.path.join(simple_model_dir, fname))
+                        vals = df["rmse"].dropna().tolist()
+                        data[model_name][raw_ps] = (np.mean(vals), np.std(vals, ddof=1))
+                    break
+
+    # XGBoost: prefer Summary_metrics, fall back to Outer_fold_results
+    if os.path.exists(nested_cv_dir):
+        for raw_ps in comparison_set_order:
+            summary_csv = os.path.join(nested_cv_dir, f"Summary_metrics_{raw_ps}.csv")
+            if os.path.exists(summary_csv):
+                df = pd.read_csv(summary_csv)
+                row = df[df["metric"] == "rmse"]
+                if not row.empty:
+                    data["XGBoost"][raw_ps] = (float(row["mean"].iloc[0]), float(row["std"].iloc[0]))
+                    continue
+            outer_csv = os.path.join(nested_cv_dir, f"Outer_fold_results_{raw_ps}.csv")
+            if os.path.exists(outer_csv):
+                df = pd.read_csv(outer_csv)
+                vals = df["rmse"].dropna().tolist()
+                data["XGBoost"][raw_ps] = (np.mean(vals), np.std(vals, ddof=1))
+
+    return data
+
+
+def fmt_mean_std(mean, std, d=3):
+    return rf"{fmt(mean, d)} $\pm$ {fmt(std, d)}"
+
+
+def build_model_comparison_rows(data):
+    rows = []
+    for model_name in model_order_comparison:
+        ps_data = data[model_name]
+        means, cells = [], []
+        for raw_ps in comparison_set_order:
+            if raw_ps in ps_data:
+                mean, std = ps_data[raw_ps]
+                means.append(mean)
+                cells.append(fmt_mean_std(mean, std))
+            else:
+                means.append(np.nan)
+                cells.append("--")
+
+        valid = [(i, m) for i, m in enumerate(means) if not np.isnan(m)]
+        if valid:
+            min_idx = min(valid, key=lambda x: x[1])[0]
+            cells[min_idx] = r"\textbf{" + cells[min_idx] + r"}"
+            best_label = comparison_set_labels[comparison_set_order[min_idx]]
+        else:
+            best_label = "--"
+
+        rows.append([model_display_name.get(model_name, model_name)] + cells + [best_label])
+    return rows
+
+
+def write_model_comparison_latex(rows):
+    n_sets = len(comparison_set_order)
+    col_labels = " & ".join(
+        rf"\textit{{{comparison_set_labels[ps]}}}" for ps in comparison_set_order
+    )
+    col_spec = "l|" + "c" * n_sets + "|l"
+    header1 = (
+        rf"        \textbf{{Model}} & \multicolumn{{{n_sets}}}{{c|}}{{\textbf{{CV-RMSE (mean $\pm$ std)}}}} & \textbf{{Best set}} \\"
+    )
+    header2 = f"         & {col_labels} & \\\\"
+
+    def header_block():
+        return [header1, header2, r"        \hline"]
+
+    lines = [
+        r"        \begin{table}[htbp]",
+        r"        \centering",
+        r"        \caption{Cross-validation RMSE comparison across model classes and predictor"
+        r" sets (mean~$\pm$~std across outer folds). The lowest RMSE per row is \textbf{bolded}."
+        r" XGBoost uses grouped nested CV; linear models use grouped CV. The table examines"
+        r" whether pressure-informed predictor sets consistently outperform the position-only"
+        r" (XYZ) baseline across model classes.}",
+        r"        \footnotesize",
+        r"        \setlength{\tabcolsep}{5pt}",
+        r"        \renewcommand{\arraystretch}{1.2}",
+        r"        \begin{tabular}{" + col_spec + "}",
+        r"        \hline\hline",
+    ] + header_block()
+
+    for row in rows:
+        lines.append("        " + " & ".join(row) + r" \\")
+    lines += [
+        r"        \hline",
+        r"        \end{tabular}",
+        r"        \label{tab:model_comparison}",
+        r"        \end{table}",
+    ]
+    write_tex(lines, os.path.join(output_dir, "Model_Comparison_Table.tex"))
+
+
+
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -345,8 +459,12 @@ if __name__ == "__main__":
     cv_df           = load_xgb_outer_fold_rmse()
     robustness_rows = build_robustness_rows()
     latency_rows    = build_latency_rows()
+    comparison_data = load_comparison_data()
 
     cv_rows, n_folds = build_xgb_cv_rows(cv_df)
     write_xgb_cv_latex(cv_rows, n_folds)
     write_robustness_latex(robustness_rows)
     write_latency_latex(latency_rows)
+
+    comparison_rows = build_model_comparison_rows(comparison_data)
+    write_model_comparison_latex(comparison_rows)
