@@ -332,11 +332,11 @@ def plot_combination_mi_local_normalized(data_path, output_folder):
 def plot_individual_mi_results_subplots(bin_range, data_folder, output_folder, file_suffix=""):
     bin_nums = list(bin_range)
     n_bins = len(bin_nums)
-    ncols = 6
+    ncols = 3
     nrows = int(np.ceil(n_bins / ncols))
     xticks_labels = [0, 2, 4, 6, 8, 9, 10, 11, 13, 15, 17, 19]
 
-    fig, axes = plt.subplots(nrows, ncols, figsize=(8.5, 4.5 * nrows / 4),
+    fig, axes = plt.subplots(nrows, ncols, figsize=(6, 8),
                              sharex=True, layout='constrained')
     axes = axes.flatten()
 
@@ -374,10 +374,10 @@ def plot_individual_mi_results_subplots(bin_range, data_folder, output_folder, f
 def plot_combination_mi_vs_num_taps_subplots(bin_range, data_folder, output_folder, file_suffix=""):
     bin_nums = list(bin_range)
     n_bins = len(bin_nums)
-    ncols = 6
+    ncols = 3
     nrows = int(np.ceil(n_bins / ncols))
 
-    fig, axes = plt.subplots(nrows, ncols, figsize=(8.5, 4.5 * nrows / 4),
+    fig, axes = plt.subplots(nrows, ncols, figsize=(6, 8),
                              sharex=True, sharey=True, layout='constrained')
     axes = axes.flatten()
 
@@ -447,7 +447,7 @@ def plot_combination_mi_local_normalized_subplots(bin_range, data_folder, output
 
     bin_nums = list(bin_range)
     n_bins = len(bin_nums)
-    ncols = 6
+    ncols = 3
     nrows = int(np.ceil(n_bins / ncols))
     xticks_labels = [0, 2, 4, 6, 8, 9, 10, 11, 13, 15, 17, 19]
     num_min = 1
@@ -472,7 +472,7 @@ def plot_combination_mi_local_normalized_subplots(bin_range, data_folder, output
     bounds = list(range(num_min, num_max + 1))
     norm = mcolors.BoundaryNorm(bounds, colormap.N)
 
-    fig, axes = plt.subplots(nrows, ncols, figsize=(8.5, 4.5 * nrows / 4),
+    fig, axes = plt.subplots(nrows, ncols, figsize=(6, 8),
                              sharex=True, sharey=True, layout='constrained')
     axes = axes.flatten()
 
@@ -542,9 +542,10 @@ def plot_combination_mi_local_normalized_subplots(bin_range, data_folder, output
     sm = plt.cm.ScalarMappable(cmap=colormap_code, norm=norm)
     sm.set_array([])
     tick_positions = [b + 0.5 for b in bounds[:-1]]
-    cbar = fig.colorbar(sm, ax=axes[:n_bins].tolist(), orientation='vertical', ticks=tick_positions, shrink=0.8, pad=0.02)
-    cbar.ax.set_yticklabels([str(i) for i in range(num_min, num_max)])
-    cbar.set_label('n-Taps \nUsed', fontsize=8, rotation=0, labelpad=0, loc='bottom')
+    cbar = fig.colorbar(sm, ax=axes.tolist(), orientation='horizontal', ticks=tick_positions,
+                        shrink=0.8, pad=0.02, location='bottom')
+    cbar.ax.set_xticklabels([str(i) for i in range(num_min, num_max)])
+    cbar.set_label('n-Taps Used', fontsize=8, labelpad=4)
     cbar.ax.tick_params(labelsize=7)
 
     os.makedirs(output_folder, exist_ok=True)
@@ -565,17 +566,17 @@ if __name__ == "__main__":
     output_folder = "MI_results/Plots/"
     output_folder_iter_1 = "MI_results_iter1/Plots"
 
-    # Plot 1: Individual MI Results with 28 bins
-    plot_individual_mi_results(data_path_individual, output_folder)
-    plot_individual_mi_results(data_path_individual_iter_1, output_folder_iter_1)
+    # # Plot 1: Individual MI Results with 28 bins
+    # plot_individual_mi_results(data_path_individual, output_folder)
+    # plot_individual_mi_results(data_path_individual_iter_1, output_folder_iter_1)
 
-    # Plot 2: Combination MI Results vs Number of Taps Used with 28 bins
-    plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
-    plot_combination_mi_vs_num_taps(data_path_combination_iter_1, output_folder_iter_1)
+    # # Plot 2: Combination MI Results vs Number of Taps Used with 28 bins
+    # plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
+    # plot_combination_mi_vs_num_taps(data_path_combination_iter_1, output_folder_iter_1)
 
-    # # Plot 3: Combination MI Results Local Normalized Summed MI Values with 28 bins
-    plot_combination_mi_local_normalized(data_path_combination, output_folder)
-    plot_combination_mi_local_normalized(data_path_combination_iter_1, output_folder_iter_1)
+    # # # Plot 3: Combination MI Results Local Normalized Summed MI Values with 28 bins
+    # plot_combination_mi_local_normalized(data_path_combination, output_folder)
+    # plot_combination_mi_local_normalized(data_path_combination_iter_1, output_folder_iter_1)
 
     # Sensitivity analysis subplots for bins 15 to 31
     bin_range = range(15, 32, 1)
