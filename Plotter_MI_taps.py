@@ -566,17 +566,17 @@ if __name__ == "__main__":
     output_folder = "MI_results/Plots/"
     output_folder_iter_1 = "MI_results_iter1/Plots"
 
-    # # Plot 1: Individual MI Results with 28 bins
-    # plot_individual_mi_results(data_path_individual, output_folder)
-    # plot_individual_mi_results(data_path_individual_iter_1, output_folder_iter_1)
+    # Plot 1: Individual MI Results with 28 bins
+    plot_individual_mi_results(data_path_individual, output_folder)
+    plot_individual_mi_results(data_path_individual_iter_1, output_folder_iter_1)
 
-    # # Plot 2: Combination MI Results vs Number of Taps Used with 28 bins
-    # plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
-    # plot_combination_mi_vs_num_taps(data_path_combination_iter_1, output_folder_iter_1)
+    # Plot 2: Combination MI Results vs Number of Taps Used with 28 bins
+    plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
+    plot_combination_mi_vs_num_taps(data_path_combination_iter_1, output_folder_iter_1)
 
-    # # # Plot 3: Combination MI Results Local Normalized Summed MI Values with 28 bins
-    # plot_combination_mi_local_normalized(data_path_combination, output_folder)
-    # plot_combination_mi_local_normalized(data_path_combination_iter_1, output_folder_iter_1)
+    # # Plot 3: Combination MI Results Local Normalized Summed MI Values with 28 bins
+    plot_combination_mi_local_normalized(data_path_combination, output_folder)
+    plot_combination_mi_local_normalized(data_path_combination_iter_1, output_folder_iter_1)
 
     # Sensitivity analysis subplots for bins 15 to 31
     bin_range = range(15, 32, 1)
