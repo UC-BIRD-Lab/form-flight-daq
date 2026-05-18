@@ -11,33 +11,33 @@ simple_model_dir = "Predictive_model_data/Grouped_CV_Simple_Models"
 simple_model_names = ["LinearRegression", "RidgeRegression", "LassoRegression", "PLSRegression"]
 
 predictor_set_label = {
-    "Pressure_2_Position_None":           "2P",
-    "Pressure_6_Position_None":           "6P",
-    "Pressure_12_Position_None":          "12P",
+    "Pressure_2_Position_None":           r"2$\Delta p$",
+    "Pressure_6_Position_None":           r"6$\Delta p$",
+    "Pressure_12_Position_None":          r"12$\Delta p$",
     "Pressure_0_Position_XPos":           "dx",
     "Pressure_0_Position_YPos":           "dy",
     "Pressure_0_Position_ZPos":           "dz",
     "Pressure_0_Position_XPos_YPos_ZPos": "dx,dy,dz",
-    "Pressure_2_Position_XPos":           "2P+dx",
-    "Pressure_2_Position_YPos":           "2P+dy",
-    "Pressure_2_Position_ZPos":           "2P+dz",
-    "Pressure_2_Position_XPos_YPos_ZPos": "2P+dx,dy,dz",
-    "Pressure_6_Position_XPos":           "6P+dx",
-    "Pressure_6_Position_YPos":           "6P+dy",
-    "Pressure_6_Position_ZPos":           "6P+dz",
-    "Pressure_6_Position_XPos_YPos_ZPos": "6P+dx,dy,dz",
-    "Pressure_12_Position_XPos":          "12P+dx",
-    "Pressure_12_Position_YPos":          "12P+dy",
-    "Pressure_12_Position_ZPos":          "12P+dz",
-    "Pressure_12_Position_XPos_YPos_ZPos":"12P+dx,dy,dz",
+    "Pressure_2_Position_XPos":           r"2$\Delta p$+dx",
+    "Pressure_2_Position_YPos":           r"2$\Delta p$+dy",
+    "Pressure_2_Position_ZPos":           r"2$\Delta p$+dz",
+    "Pressure_2_Position_XPos_YPos_ZPos": r"2$\Delta p$+dx,dy,dz",
+    "Pressure_6_Position_XPos":           r"6$\Delta p$+dx",
+    "Pressure_6_Position_YPos":           r"6$\Delta p$+dy",
+    "Pressure_6_Position_ZPos":           r"6$\Delta p$+dz",
+    "Pressure_6_Position_XPos_YPos_ZPos": r"6$\Delta p$+dx,dy,dz",
+    "Pressure_12_Position_XPos":          r"12$\Delta p$+dx",
+    "Pressure_12_Position_YPos":          r"12$\Delta p$+dy",
+    "Pressure_12_Position_ZPos":          r"12$\Delta p$+dz",
+    "Pressure_12_Position_XPos_YPos_ZPos":r"12$\Delta p$+dx,dy,dz",
 }
 
 predictor_set_order = [
-    "2P", "6P", "12P",
+    r"2$\Delta p$", r"6$\Delta p$", r"12$\Delta p$",
     "dx", "dy", "dz", "dx,dy,dz",
-    "2P+dx", "2P+dy", "2P+dz", "2P+dx,dy,dz",
-    "6P+dx", "6P+dy", "6P+dz", "6P+dx,dy,dz",
-    "12P+dx", "12P+dy", "12P+dz", "12P+dx,dy,dz",
+    r"2$\Delta p$+dx", r"2$\Delta p$+dy", r"2$\Delta p$+dz", r"2$\Delta p$+dx,dy,dz",
+    r"6$\Delta p$+dx", r"6$\Delta p$+dy", r"6$\Delta p$+dz", r"6$\Delta p$+dx,dy,dz",
+    r"12$\Delta p$+dx", r"12$\Delta p$+dy", r"12$\Delta p$+dz", r"12$\Delta p$+dx,dy,dz",
 ]
 
 model_display_name = {
@@ -131,6 +131,7 @@ def write_xgb_cv_latex(rows, n_folds):
     lines = [
         r"        \begin{table}[htbp]",
         r"        \centering",
+        r"        \captionsetup{font=footnotesize}",
         r"        \caption{XGBoost grouped nested cross-validation performance across all"
         r" predictor set configurations. Each column shows the RMSE on the held-out outer"
         r" fold; the minimum per row is shaded.}",
@@ -228,6 +229,7 @@ def write_robustness_latex(rows):
     lines = [
         r"        \begin{table}[htbp]",
         r"        \centering",
+        r"        \captionsetup{font=footnotesize}",
         r"        \caption{XGBoost robustness evaluation: models trained on Iter.~0 and tested"
         r" on Iter.~1 using five independent random seeds. Small \textit{Std} across seeds"
         r" indicates stable, reproducible predictions regardless of random initialization."
@@ -292,6 +294,7 @@ def write_latency_latex(rows):
     lines = [
         r"        \begin{table}[htbp]",
         r"        \centering",
+        r"        \captionsetup{font=footnotesize}",
         r"        \caption{Single-sample inference latency aggregated across all predictor"
         r" set configurations, benchmarked on an Intel Core i9-10850K CPU."
         r" $\Delta$ vs XGBoost shows the mean latency difference relative to XGBoost"
@@ -326,10 +329,10 @@ comparison_set_order = [
 ]
 
 comparison_set_labels = {
-    "Pressure_0_Position_XPos_YPos_ZPos":  "XYZ only",
-    "Pressure_2_Position_XPos_YPos_ZPos":  "2P+XYZ",
-    "Pressure_6_Position_XPos_YPos_ZPos":  "6P+XYZ",
-    "Pressure_12_Position_XPos_YPos_ZPos": "12P+XYZ",
+    "Pressure_0_Position_XPos_YPos_ZPos":  "dx,dy,dz only",
+    "Pressure_2_Position_XPos_YPos_ZPos":  r"2$\Delta p$+dx,dy,dz",
+    "Pressure_6_Position_XPos_YPos_ZPos":  r"6$\Delta p$+dx,dy,dz",
+    "Pressure_12_Position_XPos_YPos_ZPos": r"12$\Delta p$+dx,dy,dz",
 }
 
 model_order_comparison = [
@@ -398,11 +401,8 @@ def build_model_comparison_rows(data):
         if valid:
             min_idx = min(valid, key=lambda x: x[1])[0]
             cells[min_idx] = r"\textbf{" + cells[min_idx] + r"}"
-            best_label = comparison_set_labels[comparison_set_order[min_idx]]
-        else:
-            best_label = "--"
 
-        rows.append([model_display_name.get(model_name, model_name)] + cells + [best_label])
+        rows.append([model_display_name.get(model_name, model_name)] + cells)
     return rows
 
 
@@ -411,11 +411,11 @@ def write_model_comparison_latex(rows):
     col_labels = " & ".join(
         rf"\textit{{{comparison_set_labels[ps]}}}" for ps in comparison_set_order
     )
-    col_spec = "l|" + "c" * n_sets + "|l"
+    col_spec = "l|" + "c" * n_sets
     header1 = (
-        rf"        \textbf{{Model}} & \multicolumn{{{n_sets}}}{{c|}}{{\textbf{{CV-RMSE (mean $\pm$ std)}}}} & \textbf{{Best set}} \\"
+        rf"        \textbf{{Model}} & \multicolumn{{{n_sets}}}{{c}}{{\textbf{{CV-RMSE (mean $\pm$ std)}}}} \\"
     )
-    header2 = f"         & {col_labels} & \\\\"
+    header2 = f"         & {col_labels} \\\\"
 
     def header_block():
         return [header1, header2, r"        \hline"]
@@ -423,11 +423,12 @@ def write_model_comparison_latex(rows):
     lines = [
         r"        \begin{table}[htbp]",
         r"        \centering",
+        r"        \captionsetup{font=footnotesize}",
         r"        \caption{Cross-validation RMSE comparison across model classes and predictor"
         r" sets (mean~$\pm$~std across outer folds). The lowest RMSE per row is \textbf{bolded}."
         r" XGBoost uses grouped nested CV; linear models use grouped CV. The table examines"
         r" whether pressure-informed predictor sets consistently outperform the position-only"
-        r" (XYZ) baseline across model classes.}",
+        r" (dx,dy,dz) baseline across model classes.}",
         r"        \footnotesize",
         r"        \setlength{\tabcolsep}{5pt}",
         r"        \renewcommand{\arraystretch}{1.2}",
@@ -450,16 +451,141 @@ def write_model_comparison_latex(rows):
 
 
 # ---------------------------------------------------------------------------
+# Table S6: Position-component sensitivity within 12Δp (which axis matters?)
+# ---------------------------------------------------------------------------
+
+position_sens_set_order = [
+    "Pressure_12_Position_None",
+    "Pressure_12_Position_XPos",
+    "Pressure_12_Position_YPos",
+    "Pressure_12_Position_ZPos",
+    "Pressure_12_Position_XPos_YPos_ZPos",
+]
+
+position_sens_set_labels = {
+    "Pressure_12_Position_None":           r"12$\Delta p$",
+    "Pressure_12_Position_XPos":           r"12$\Delta p$+dx",
+    "Pressure_12_Position_YPos":           r"12$\Delta p$+dy",
+    "Pressure_12_Position_ZPos":           r"12$\Delta p$+dz",
+    "Pressure_12_Position_XPos_YPos_ZPos": r"12$\Delta p$+dx,dy,dz",
+}
+
+
+def load_position_sensitivity_data():
+    """Return {model_name: {raw_predictor_set: (mean_rmse, std_rmse)}} for 12Δp variants."""
+    data = {m: {} for m in model_order_comparison}
+
+    # Simple models
+    if os.path.exists(simple_model_dir):
+        for fname in os.listdir(simple_model_dir):
+            if not (fname.startswith("Outer_fold_results_") and fname.endswith(".csv")):
+                continue
+            stem = fname[len("Outer_fold_results_"):-4]
+            for model_name in simple_model_names:
+                safe = sanitize_name(model_name)
+                if stem.startswith(safe + "_"):
+                    raw_ps = stem[len(safe) + 1:]
+                    if raw_ps in position_sens_set_order:
+                        df = pd.read_csv(os.path.join(simple_model_dir, fname))
+                        vals = df["rmse"].dropna().tolist()
+                        data[model_name][raw_ps] = (np.mean(vals), np.std(vals, ddof=1))
+                    break
+
+    # XGBoost
+    if os.path.exists(nested_cv_dir):
+        for raw_ps in position_sens_set_order:
+            summary_csv = os.path.join(nested_cv_dir, f"Summary_metrics_{raw_ps}.csv")
+            if os.path.exists(summary_csv):
+                df = pd.read_csv(summary_csv)
+                row = df[df["metric"] == "rmse"]
+                if not row.empty:
+                    data["XGBoost"][raw_ps] = (float(row["mean"].iloc[0]), float(row["std"].iloc[0]))
+                    continue
+            outer_csv = os.path.join(nested_cv_dir, f"Outer_fold_results_{raw_ps}.csv")
+            if os.path.exists(outer_csv):
+                df = pd.read_csv(outer_csv)
+                vals = df["rmse"].dropna().tolist()
+                data["XGBoost"][raw_ps] = (np.mean(vals), np.std(vals, ddof=1))
+
+    return data
+
+
+def build_position_sensitivity_rows(data):
+    rows = []
+    for model_name in model_order_comparison:
+        ps_data = data[model_name]
+        means, cells = [], []
+        for raw_ps in position_sens_set_order:
+            if raw_ps in ps_data:
+                mean, std = ps_data[raw_ps]
+                means.append(mean)
+                cells.append(fmt_mean_std(mean, std))
+            else:
+                means.append(np.nan)
+                cells.append("--")
+
+        valid = [(i, m) for i, m in enumerate(means) if not np.isnan(m)]
+        if valid:
+            min_idx = min(valid, key=lambda x: x[1])[0]
+            cells[min_idx] = r"\textbf{" + cells[min_idx] + r"}"
+
+        rows.append([model_display_name.get(model_name, model_name)] + cells)
+    return rows
+
+
+def write_position_sensitivity_latex(rows):
+    n_sets = len(position_sens_set_order)
+    col_labels = " & ".join(
+        rf"\textit{{{position_sens_set_labels[ps]}}}" for ps in position_sens_set_order
+    )
+    col_spec = "l|" + "c" * n_sets
+    header1 = (
+        rf"        \textbf{{Model}} & \multicolumn{{{n_sets}}}{{c}}{{\textbf{{CV-RMSE (mean $\pm$ std)}}}} \\"
+    )
+    header2 = f"         & {col_labels} \\\\"
+
+    def header_block():
+        return [header1, header2, r"        \hline"]
+
+    lines = [
+        r"        \begin{table}[htbp]",
+        r"        \centering",
+        r"        \captionsetup{font=footnotesize}",
+        r"        \caption{CV-RMSE across model classes for the 12$\Delta p$ predictor set"
+        r" augmented with individual position components. The lowest RMSE per row is"
+        r" \textbf{bolded}. Comparing columns isolates the contribution of each position"
+        r" axis (dx, dy, dz) beyond the pressure-only baseline, and assesses whether"
+        r" dx alone captures most of the positional information.}",
+        r"        \footnotesize",
+        r"        \setlength{\tabcolsep}{5pt}",
+        r"        \renewcommand{\arraystretch}{1.2}",
+        r"        \begin{tabular}{" + col_spec + "}",
+        r"        \hline\hline",
+    ] + header_block()
+
+    for row in rows:
+        lines.append("        " + " & ".join(row) + r" \\")
+    lines += [
+        r"        \hline",
+        r"        \end{tabular}",
+        r"        \label{tab:position_sensitivity}",
+        r"        \end{table}",
+    ]
+    write_tex(lines, os.path.join(output_dir, "Position_Sensitivity_Table.tex"))
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     os.makedirs(output_dir, exist_ok=True)
 
-    cv_df           = load_xgb_outer_fold_rmse()
-    robustness_rows = build_robustness_rows()
-    latency_rows    = build_latency_rows()
-    comparison_data = load_comparison_data()
+    cv_df              = load_xgb_outer_fold_rmse()
+    robustness_rows    = build_robustness_rows()
+    latency_rows       = build_latency_rows()
+    comparison_data    = load_comparison_data()
+    pos_sens_data      = load_position_sensitivity_data()
 
     cv_rows, n_folds = build_xgb_cv_rows(cv_df)
     write_xgb_cv_latex(cv_rows, n_folds)
@@ -468,3 +594,6 @@ if __name__ == "__main__":
 
     comparison_rows = build_model_comparison_rows(comparison_data)
     write_model_comparison_latex(comparison_rows)
+
+    pos_sens_rows = build_position_sensitivity_rows(pos_sens_data)
+    write_position_sensitivity_latex(pos_sens_rows)
