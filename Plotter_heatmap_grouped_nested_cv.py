@@ -1,6 +1,7 @@
 import glob
 import os
 
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -8,7 +9,7 @@ import pandas as pd
 
 PRESSURE_ORDER = [12, 6, 2, 0]
 POSITION_ORDER = ["None", "XPos", "YPos", "ZPos", "XPos_YPos_ZPos"]
-PRESSURE_LABELS = ["All\n12", "6\noptimal", "2\nnostril", "None"]
+PRESSURE_LABELS = ["All\n12", "6\nselected", "Naris-tap\npair", "None"]
 POSITION_LABELS = ["None", "dx", "dy", "dz", "dx+dy+dz"]
 
 
@@ -59,6 +60,13 @@ def plot_grouped_nested_cv_heatmap(summary_df, save_folder_path, file_name="Heat
     matrix = build_rmse_matrix(summary_df)
     masked_matrix = np.ma.masked_invalid(matrix)
 
+    matrix_df = pd.DataFrame(
+        matrix,
+        index=PRESSURE_LABELS,
+        columns=POSITION_LABELS
+    ).round(4)
+    print("RMSE matrix:\n", matrix_df.to_string(), "\n")
+
     vmin = 0
     vmax = np.nanmax(matrix)
     print(f"Heatmap colorbar upper: {vmax:.4f}")
@@ -67,6 +75,18 @@ def plot_grouped_nested_cv_heatmap(summary_df, save_folder_path, file_name="Heat
     fig, ax = plt.subplots(figsize=(6.5 / 2, 3.25))
 
     im = ax.imshow(masked_matrix, cmap="Blues", aspect=1, vmin=vmin, vmax=vmax)
+
+    # Mark the invalid cell (0 pressure taps + no position = no predictors)
+    inv_r = PRESSURE_ORDER.index(0)
+    inv_c = POSITION_ORDER.index("None")
+    ax.add_patch(mpatches.Rectangle(
+        (inv_c - 0.5, inv_r - 0.5), 1, 1,
+        linewidth=2.0, edgecolor="black", facecolor="black", zorder=3
+    ))
+    for dx, dy in [(1, 1), (1, -1)]:
+        ax.plot([inv_c - 0.4 * dx, inv_c + 0.4 * dx],
+                [inv_r - 0.4 * dy, inv_r + 0.4 * dy],
+                color="white", linewidth=1.5, zorder=4)
 
     cbar = fig.colorbar(im, ax=ax, orientation="horizontal", pad=0.2)
     cbar.ax.tick_params(labelsize=8)
@@ -82,18 +102,94 @@ def plot_grouped_nested_cv_heatmap(summary_df, save_folder_path, file_name="Heat
 
     for spine in ax.spines.values():
         spine.set_visible(False)
-    ax.tick_params(left=False, bottom=False)
+    ax.tick_params(left=False, bottom=False, pad=6)
 
     plt.tight_layout()
-    plt.show()
+    os.makedirs(save_folder_path, exist_ok=True)
     save_path = os.path.join(save_folder_path, file_name)
-    # plt.savefig(save_path, format="svg", dpi=1000, transparent=True)
-    plt.close()
+    plt.rcParams["svg.fonttype"] = "none"
+    fig.savefig(save_path, format="pdf", bbox_inches="tight", dpi=600)
     print(f"Saved to {save_path}")
+    plt.show()
+    plt.close()
+
+
+PRESSURE_TEX_LABELS = {
+    12: r"All 12\,$\Delta p$",
+    6:  r"6 selected\,$\Delta p$",
+    2:  r"Naris-tap pair",
+    0:  r"None",
+}
+POSITION_TEX_LABELS = {
+    "None":           "None",
+    "XPos":           r"$\mathrm{d}x$",
+    "YPos":           r"$\mathrm{d}y$",
+    "ZPos":           r"$\mathrm{d}z$",
+    "XPos_YPos_ZPos": r"$\mathrm{d}x$+$\mathrm{d}y$+$\mathrm{d}z$",
+}
+
+
+def write_heatmap_table_latex(summary_df, save_folder_path,
+                               file_name="Heatmap_RMSE_Table.tex"):
+    col_headers = [POSITION_TEX_LABELS[p] for p in POSITION_ORDER]
+    n_cols = len(POSITION_ORDER)
+    col_spec = "l|" + "c" * n_cols
+
+    lines = [
+        r"        \begin{table}[htbp]",
+        r"        \centering",
+        r"        \captionsetup{font=footnotesize}",
+        r"        \caption{XGBoost grouped nested CV RMSE (mean\,$\pm$\,std across outer folds) "
+        r"for all pressure-tap and position-predictor combinations. "
+        r"The crossed cell (\textbf{N/A}) has no predictors.}",
+        r"        \footnotesize",
+        r"        \setlength{\tabcolsep}{5pt}",
+        r"        \renewcommand{\arraystretch}{1.2}",
+        f"        \\begin{{tabular}}{{{col_spec}}}",
+        r"        \hline\hline",
+        "        \\textbf{Pressure taps} & " +
+        " & ".join(f"\\textbf{{{h}}}" for h in col_headers) + r" \\",
+        r"        \hline",
+    ]
+
+    for p in PRESSURE_ORDER:
+        row_label = PRESSURE_TEX_LABELS[p]
+        cells = []
+        for pos in POSITION_ORDER:
+            if p == 0 and pos == "None":
+                cells.append(r"\textbf{N/A}")
+                continue
+            match = summary_df[
+                (summary_df["pressure_set"] == p) &
+                (summary_df["position_set"] == pos)
+            ]
+            if match.empty or pd.isna(match["mean_rmse"].iloc[0]):
+                cells.append("---")
+            else:
+                mean = match["mean_rmse"].iloc[0]
+                std  = match["std_rmse"].iloc[0]
+                cells.append(f"{mean:.2f}\\,$\\pm$\\,{std:.2f}")
+        lines.append(f"        {row_label} & " + " & ".join(cells) + r" \\")
+
+    lines += [
+        r"        \hline",
+        r"        \end{tabular}",
+        r"        \label{tab:heatmap_rmse}",
+        r"        \end{table}",
+    ]
+
+    os.makedirs(save_folder_path, exist_ok=True)
+    out_path = os.path.join(save_folder_path, file_name)
+    with open(out_path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"Saved: {out_path}")
 
 
 if __name__ == "__main__":
-    folder_path = "Predictive_model_data/Resulting_plots_tables/Grouped_Nested_CV_XGB"
-    summary_df = collect_grouped_nested_cv_summary_info(folder_path)
+    data_folder   = "Predictive_model_data/Grouped_Nested_CV_XGB"
+    plot_folder   = "Predictive_model_data/Plots"
+    table_folder  = "Predictive_model_data/Table"
+    summary_df = collect_grouped_nested_cv_summary_info(data_folder)
     print(summary_df)
-    plot_grouped_nested_cv_heatmap(summary_df, folder_path)
+    plot_grouped_nested_cv_heatmap(summary_df, plot_folder)
+    write_heatmap_table_latex(summary_df, table_folder)
