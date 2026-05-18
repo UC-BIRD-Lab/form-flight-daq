@@ -2,6 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors as mcolors
+from matplotlib.colors import LinearSegmentedColormap
 
 def create_horizontal_colorbar(colormap, cbar_min, cbar_max, label, filename, step):
     cmap = colormap
@@ -80,4 +81,16 @@ if __name__ == '__main__':
         label=r'$\Delta p$\n(Pa)',
         filename=os.path.join(output_folder_path, 'Delta_p_colorbar_horizontal.svg'),
         step=6
+    )
+
+    teal_white_coral = LinearSegmentedColormap.from_list(
+        'teal_white_coral', ['#0a7e6e', '#ffffff', '#c84b2f']
+    )
+    create_horizontal_colorbar(
+        colormap=teal_white_coral,
+        cbar_min=-4,
+        cbar_max=4,
+        label=r'Prediction error ($\hat{y} - y$)',
+        filename=os.path.join(output_folder_path, 'XGB_Error_colorbar_horizontal.svg'),
+        step=4
     )

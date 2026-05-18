@@ -108,7 +108,7 @@ def plot_grouped_nested_cv_heatmap(summary_df, save_folder_path, file_name="Heat
     os.makedirs(save_folder_path, exist_ok=True)
     save_path = os.path.join(save_folder_path, file_name)
     plt.rcParams["svg.fonttype"] = "none"
-    fig.savefig(save_path, format="pdf", bbox_inches="tight", dpi=600)
+    fig.savefig(save_path, format="svg", bbox_inches="tight", dpi=600)
     print(f"Saved to {save_path}")
     plt.show()
     plt.close()
