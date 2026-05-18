@@ -222,6 +222,88 @@ def plot_xgb_error_heatmap(df, save_file_path):
     print(f'Saved: {save_file_path}')
 
 
+def plot_xgb_abs_error_heatmap(df, save_file_path):
+    ypos_abs = [0, 2.75, 5.5, 8.25, 11, 13.75, 16.5, 19.25]
+    zpos_abs = [-2.75, 0, 2.75, 5.5]
+    AoA = [0, 2.5, 5]
+
+    ypos = [np.floor(y * (100 / 11)) for y in ypos_abs]
+    zpos = [np.round(z * (100 / 11)) for z in zpos_abs]
+
+    (pred_1_1, pred_1_2, pred_1_3,
+     pred_2_1, pred_2_2, pred_2_3,
+     pred_3_1, pred_3_2, pred_3_3) = build_heatmap_matrices(
+        zpos_abs, ypos_abs, AoA, df, 'xgboost_prediction_delta_L_D_mean'
+    )
+
+    (actual_1_1, actual_1_2, actual_1_3,
+     actual_2_1, actual_2_2, actual_2_3,
+     actual_3_1, actual_3_2, actual_3_3) = build_heatmap_matrices(
+        zpos_abs, ypos_abs, AoA, df, 'delta_L_D_mean'
+    )
+
+    abs_error_1_1 = abs(pred_1_1 - actual_1_1)
+    abs_error_1_2 = abs(pred_1_2 - actual_1_2)
+    abs_error_1_3 = abs(pred_1_3 - actual_1_3)
+    abs_error_2_1 = abs(pred_2_1 - actual_2_1)
+    abs_error_2_2 = abs(pred_2_2 - actual_2_2)
+    abs_error_2_3 = abs(pred_2_3 - actual_2_3)
+    abs_error_3_1 = abs(pred_3_1 - actual_3_1)
+    abs_error_3_2 = abs(pred_3_2 - actual_3_2)
+    abs_error_3_3 = abs(pred_3_3 - actual_3_3)
+
+    cmap = plt.get_cmap('Greys')
+    vmin = 0
+    vmax = 4
+    print(f'Abs error heatmap colorbar Upper:{vmax}')
+    print(f'Abs error heatmap colorbar Lower:{vmin}')
+
+    fig = plt.figure(figsize=(6.5, 3.25))
+    gs = fig.add_gridspec(3, 3, hspace=0, wspace=-0.02)
+    axes = gs.subplots(sharex='col', sharey='row')
+
+    abs_error_data = [[abs_error_1_1, abs_error_1_2, abs_error_1_3],
+                      [abs_error_2_1, abs_error_2_2, abs_error_2_3],
+                      [abs_error_3_1, abs_error_3_2, abs_error_3_3]]
+
+    for i in range(3):
+        for j in range(3):
+            axes[i, j].imshow(abs_error_data[i][j], cmap=cmap, interpolation='nearest', aspect=1, vmin=vmin, vmax=vmax)
+
+            if i == 2:
+                axes[i, j].set_xticks(np.arange(0, 8, step=1))
+                axes[i, j].set_xticklabels([int(y) for y in ypos], fontsize=7)
+            else:
+                axes[i, j].set_xticks([])
+
+            axes[i, j].set_yticks(np.arange(0, 4, step=1))
+            axes[i, j].set_yticklabels([int(z) for z in zpos], fontsize=7)
+
+            axes[i, j].plot(0, 1, 'o', color='black', markersize=8)
+            axes[i, j].plot([-0.5, 2], [1, 1], 'k-', linewidth=2)
+
+            axes[i, j].tick_params(axis='both', which='both', width=0.25)
+            for spine in axes[i, j].spines.values():
+                spine.set_linewidth(0.25)
+
+            if j == 0:
+                axes[i, j].set_ylabel(r'$\alpha = $' + f'{AoA[i]}' + r'$^{\circ}$', fontsize=10)
+
+    cbar_ax = fig.add_axes([0.15, 0.05, 0.7, 0.02])
+    cbar = fig.colorbar(
+        axes[0, 0].imshow(abs_error_data[0][0], cmap=cmap, interpolation='nearest', aspect=1, vmin=vmin, vmax=vmax),
+        cax=cbar_ax, orientation='horizontal'
+    )
+    cbar.set_label(r'Absolute prediction error $|\hat{y} - y|$', fontsize=10)
+    cbar.ax.tick_params(labelsize=7)
+
+    fig.supxlabel(r'dy ($\%$b)', fontsize=10)
+    fig.supylabel(r'dz ($\%$b)', fontsize=10)
+
+    plt.savefig(save_file_path, dpi=600, bbox_inches='tight', transparent=True, format='svg')
+    print(f'Saved: {save_file_path}')
+
+
 def plot_assembled_grid(raw_pred_dir, save_file_path, value_col, cmap, vmin, vmax, cbar_label):
     pressure_order   = [12, 6, 2, 0]
     position_order   = ['None', 'XPos', 'YPos', 'ZPos', 'XPos_YPos_ZPos']
@@ -257,7 +339,7 @@ def plot_assembled_grid(raw_pred_dir, save_file_path, value_col, cmap, vmin, vma
                 continue
 
             df = pd.read_csv(csv_path)
-            if value_col == 'error':
+            if value_col in ('error', 'abs_error'):
                 (p_1_1, p_1_2, p_1_3,
                  p_2_1, p_2_2, p_2_3,
                  p_3_1, p_3_2, p_3_3) = build_heatmap_matrices(
@@ -268,9 +350,14 @@ def plot_assembled_grid(raw_pred_dir, save_file_path, value_col, cmap, vmin, vma
                  a_3_1, a_3_2, a_3_3) = build_heatmap_matrices(
                     zpos_abs, ypos_abs, AoA, df, 'delta_L_D_mean'
                 )
-                data = [[p_1_1 - a_1_1, p_1_2 - a_1_2, p_1_3 - a_1_3],
-                        [p_2_1 - a_2_1, p_2_2 - a_2_2, p_2_3 - a_2_3],
-                        [p_3_1 - a_3_1, p_3_2 - a_3_2, p_3_3 - a_3_3]]
+                if value_col == 'abs_error':
+                    data = [[abs(p_1_1 - a_1_1), abs(p_1_2 - a_1_2), abs(p_1_3 - a_1_3)],
+                            [abs(p_2_1 - a_2_1), abs(p_2_2 - a_2_2), abs(p_2_3 - a_2_3)],
+                            [abs(p_3_1 - a_3_1), abs(p_3_2 - a_3_2), abs(p_3_3 - a_3_3)]]
+                else:
+                    data = [[p_1_1 - a_1_1, p_1_2 - a_1_2, p_1_3 - a_1_3],
+                            [p_2_1 - a_2_1, p_2_2 - a_2_2, p_2_3 - a_2_3],
+                            [p_3_1 - a_3_1, p_3_2 - a_3_2, p_3_3 - a_3_3]]
             else:
                 (m_1_1, m_1_2, m_1_3,
                  m_2_1, m_2_2, m_2_3,
@@ -318,7 +405,8 @@ def plot_assembled_grid(raw_pred_dir, save_file_path, value_col, cmap, vmin, vma
     cbar.set_label(cbar_label, fontsize=10)
     cbar.ax.tick_params(labelsize=8)
 
-    plt.savefig(save_file_path, dpi=600, bbox_inches='tight', transparent=True, format='svg')
+    plt.rcParams['svg.fonttype'] = 'none'
+    plt.savefig(save_file_path, dpi=600, bbox_inches='tight', format='pdf')
     print(f'Saved: {save_file_path}')
 
 
@@ -327,21 +415,26 @@ if __name__ == '__main__':
     predicted_dir = 'Predictive_model_data/Plots/XGBoost_predicted_heatmap'
     error_dir     = 'Predictive_model_data/Plots/XGBoost_Error_map'
 
+    abs_error_dir = 'Predictive_model_data/Plots/XGBoost_Abs_Error_map'
+
     if not os.path.exists(predicted_dir):
         os.makedirs(predicted_dir)
     if not os.path.exists(error_dir):
         os.makedirs(error_dir)
+    if not os.path.exists(abs_error_dir):
+        os.makedirs(abs_error_dir)
 
     csv_files = sorted([f for f in os.listdir(raw_pred_dir) if f.startswith('Raw_predictions_') and f.endswith('.csv')])
 
-    # for csv_file in csv_files:
-    #     predictor_set = csv_file[len('Raw_predictions_'):-len('.csv')]
-    #     csv_path = os.path.join(raw_pred_dir, csv_file)
-    #     df = pd.read_csv(csv_path)
-    #     print(f'Loaded {len(df)} rows | predictor set: {predictor_set}')
+    for csv_file in csv_files:
+        predictor_set = csv_file[len('Raw_predictions_'):-len('.csv')]
+        csv_path = os.path.join(raw_pred_dir, csv_file)
+        df = pd.read_csv(csv_path)
+        print(f'Loaded {len(df)} rows | predictor set: {predictor_set}')
 
-    #     plot_xgb_predicted_heatmap(df, os.path.join(predicted_dir, f'Heatmap_XGB_Predicted_{predictor_set}.svg'))
-    #     plot_xgb_error_heatmap(df, os.path.join(error_dir, f'Heatmap_XGB_Error_{predictor_set}.svg'))
+        plot_xgb_predicted_heatmap(df, os.path.join(predicted_dir, f'Heatmap_XGB_Predicted_{predictor_set}.svg'))
+        plot_xgb_error_heatmap(df, os.path.join(error_dir, f'Heatmap_XGB_Error_{predictor_set}.svg'))
+        plot_xgb_abs_error_heatmap(df, os.path.join(abs_error_dir, f'Heatmap_XGB_AbsError_{predictor_set}.svg'))
 
     # Assembled overview grids
     assembled_dir = 'Predictive_model_data/Plots/XGBoost_results_assembled_grids'
@@ -352,15 +445,22 @@ if __name__ == '__main__':
     )
     plot_assembled_grid(
         raw_pred_dir,
-        os.path.join(assembled_dir, 'Assembled_XGB_Predicted_All.svg'),
+        os.path.join(assembled_dir, 'Assembled_XGB_Predicted_All.pdf'),
         value_col='xgboost_prediction_delta_L_D_mean',
         cmap=plt.get_cmap('coolwarm'), vmin=-6, vmax=6,
         cbar_label=r'Predicted $\Delta L/D$'
     )
     plot_assembled_grid(
         raw_pred_dir,
-        os.path.join(assembled_dir, 'Assembled_XGB_Error_All.svg'),
+        os.path.join(assembled_dir, 'Assembled_XGB_Error_All.pdf'),
         value_col='error',
         cmap=error_cmap, vmin=-4, vmax=4,
         cbar_label=r'Prediction error ($\hat{y} - y$)'
+    )
+    plot_assembled_grid(
+        raw_pred_dir,
+        os.path.join(assembled_dir, 'Assembled_XGB_AbsError_All.pdf'),
+        value_col='abs_error',
+        cmap=plt.get_cmap('Greys'), vmin=0, vmax=4,
+        cbar_label=r'Absolute prediction error $|\hat{y} - y|$'
     )

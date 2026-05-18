@@ -11,6 +11,8 @@
 /Predictive_model_data_archive/
 /Colorbars_for_Figures/
 /Output_data.zip
+/Misc/
+/Paper_PDF/
 
 # Keep placeholders / docs inside ignored dirs
 !/Post_Data/.gitkeep
