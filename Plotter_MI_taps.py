@@ -566,28 +566,28 @@ if __name__ == "__main__":
     output_folder = "MI_results/Plots/"
     output_folder_iter_1 = "MI_results_iter1/Plots"
 
-    # Plot 1: Individual MI Results with 28 bins
-    plot_individual_mi_results(data_path_individual, output_folder)
-    plot_individual_mi_results(data_path_individual_iter_1, output_folder_iter_1)
+    # # Plot 1: Individual MI Results with 28 bins
+    # plot_individual_mi_results(data_path_individual, output_folder)
+    # plot_individual_mi_results(data_path_individual_iter_1, output_folder_iter_1)
 
-    # Plot 2: Combination MI Results vs Number of Taps Used with 28 bins
-    plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
-    plot_combination_mi_vs_num_taps(data_path_combination_iter_1, output_folder_iter_1)
+    # # Plot 2: Combination MI Results vs Number of Taps Used with 28 bins
+    # plot_combination_mi_vs_num_taps(data_path_combination, output_folder)
+    # plot_combination_mi_vs_num_taps(data_path_combination_iter_1, output_folder_iter_1)
 
     # # Plot 3: Combination MI Results Local Normalized Summed MI Values with 28 bins
     plot_combination_mi_local_normalized(data_path_combination, output_folder)
     plot_combination_mi_local_normalized(data_path_combination_iter_1, output_folder_iter_1)
 
-    # Sensitivity analysis subplots for bins 15 to 31
-    bin_range = range(15, 32, 1)
-    plot_individual_mi_results_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
-    plot_combination_mi_vs_num_taps_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
-    plot_combination_mi_local_normalized_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
+    # # Sensitivity analysis subplots for bins 15 to 31
+    # bin_range = range(15, 32, 1)
+    # plot_individual_mi_results_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
+    # plot_combination_mi_vs_num_taps_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
+    # plot_combination_mi_local_normalized_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
 
-    # Iter1 sensitivity analysis subplots for bins 15 to 31
-    plot_individual_mi_results_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
-    plot_combination_mi_vs_num_taps_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
-    plot_combination_mi_local_normalized_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
+    # # Iter1 sensitivity analysis subplots for bins 15 to 31
+    # plot_individual_mi_results_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
+    # plot_combination_mi_vs_num_taps_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
+    # plot_combination_mi_local_normalized_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
 
 
 

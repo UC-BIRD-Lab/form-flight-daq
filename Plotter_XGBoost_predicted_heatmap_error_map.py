@@ -169,7 +169,7 @@ def plot_xgb_error_heatmap(df, save_file_path):
     error_3_3 = pred_3_3 - actual_3_3
 
     cmap = LinearSegmentedColormap.from_list(
-        'teal_white_coral', ['#0a7e6e', '#ffffff', '#c84b2f']
+        'teal_white_coral', ['#c84b2f', '#ffffff', '#0a7e6e']
     )
     vmin = -4
     vmax = 4
@@ -432,24 +432,27 @@ if __name__ == '__main__':
         df = pd.read_csv(csv_path)
         print(f'Loaded {len(df)} rows | predictor set: {predictor_set}')
 
-        plot_xgb_predicted_heatmap(df, os.path.join(predicted_dir, f'Heatmap_XGB_Predicted_{predictor_set}.svg'))
+        # plot_xgb_predicted_heatmap(df, os.path.join(predicted_dir, f'Heatmap_XGB_Predicted_{predictor_set}.svg'))
         plot_xgb_error_heatmap(df, os.path.join(error_dir, f'Heatmap_XGB_Error_{predictor_set}.svg'))
-        plot_xgb_abs_error_heatmap(df, os.path.join(abs_error_dir, f'Heatmap_XGB_AbsError_{predictor_set}.svg'))
+        # plot_xgb_abs_error_heatmap(df, os.path.join(abs_error_dir, f'Heatmap_XGB_AbsError_{predictor_set}.svg'))
 
     # Assembled overview grids
     assembled_dir = 'Predictive_model_data/Plots/XGBoost_results_assembled_grids'
     if not os.path.exists(assembled_dir):
         os.makedirs(assembled_dir)
     error_cmap = LinearSegmentedColormap.from_list(
-        'teal_white_coral', ['#0a7e6e', '#ffffff', '#c84b2f']
+        'teal_white_coral', ['#c84b2f', '#ffffff', '#0a7e6e']
     )
-    plot_assembled_grid(
-        raw_pred_dir,
-        os.path.join(assembled_dir, 'Assembled_XGB_Predicted_All.pdf'),
-        value_col='xgboost_prediction_delta_L_D_mean',
-        cmap=plt.get_cmap('coolwarm'), vmin=-6, vmax=6,
-        cbar_label=r'Predicted $\Delta L/D$'
-    )
+    # error_cmap = LinearSegmentedColormap.from_list(
+    #     'teal_white_coral', ['#0a7e6e','#ffffff', '#c84b2f']
+    # )
+    # plot_assembled_grid(
+    #     raw_pred_dir,
+    #     os.path.join(assembled_dir, 'Assembled_XGB_Predicted_All.pdf'),
+    #     value_col='xgboost_prediction_delta_L_D_mean',
+    #     cmap=plt.get_cmap('coolwarm'), vmin=-6, vmax=6,
+    #     cbar_label=r'Predicted $\Delta L/D$'
+    
     plot_assembled_grid(
         raw_pred_dir,
         os.path.join(assembled_dir, 'Assembled_XGB_Error_All.pdf'),
@@ -457,10 +460,10 @@ if __name__ == '__main__':
         cmap=error_cmap, vmin=-4, vmax=4,
         cbar_label=r'Prediction error ($\hat{y} - y$)'
     )
-    plot_assembled_grid(
-        raw_pred_dir,
-        os.path.join(assembled_dir, 'Assembled_XGB_AbsError_All.pdf'),
-        value_col='abs_error',
-        cmap=plt.get_cmap('Greys'), vmin=0, vmax=4,
-        cbar_label=r'Absolute prediction error $|\hat{y} - y|$'
-    )
+    # plot_assembled_grid(
+    #     raw_pred_dir,
+    #     os.path.join(assembled_dir, 'Assembled_XGB_AbsError_All.pdf'),
+    #     value_col='abs_error',
+    #     cmap=plt.get_cmap('Greys'), vmin=0, vmax=4,
+    #     cbar_label=r'Absolute prediction error $|\hat{y} - y|$'
+    # )

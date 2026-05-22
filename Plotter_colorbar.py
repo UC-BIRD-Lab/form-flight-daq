@@ -84,7 +84,7 @@ if __name__ == '__main__':
     )
 
     teal_white_coral = LinearSegmentedColormap.from_list(
-        'teal_white_coral', ['#0a7e6e', '#ffffff', '#c84b2f']
+        'teal_white_coral', ['#c84b2f', '#ffffff', '#0a7e6e']
     )
     create_horizontal_colorbar(
         colormap=teal_white_coral,
