@@ -1,0 +1,6 @@
+model_name,outer_fold,n_train_rows,n_test_rows,n_train_groups,n_test_groups,rmse,mae,r2,best_params_json,best_inner_rmse,best_n_components,predictor_set_name
+PLSRegression,1,460,116,230,58,1.4494662593398995,1.249889873507883,0.12298744420419438,"{""model__n_components"": 7}",1.6013442646335367,7,Pressure_12_Position_None
+PLSRegression,2,460,116,230,58,1.5678293320891228,1.3358457258017753,0.2834681621296763,"{""model__n_components"": 8}",1.5625152211776734,8,Pressure_12_Position_None
+PLSRegression,3,460,116,230,58,1.753352494621804,1.4237874340761203,0.2832508561685788,"{""model__n_components"": 7}",1.5066469600028394,7,Pressure_12_Position_None
+PLSRegression,4,462,114,231,57,1.5883730143510881,1.2948647672681706,0.24256374513898815,"{""model__n_components"": 6}",1.5524398320150166,6,Pressure_12_Position_None
+PLSRegression,5,462,114,231,57,1.5098356377133926,1.3398126050826282,0.10536423949199614,"{""model__n_components"": 6}",1.5738901717641447,6,Pressure_12_Position_None

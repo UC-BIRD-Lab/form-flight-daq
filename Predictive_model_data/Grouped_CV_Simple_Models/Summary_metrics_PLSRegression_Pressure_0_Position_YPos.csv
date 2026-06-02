@@ -1,0 +1,4 @@
+model_name,predictor_set_name,metric,mean,std
+PLSRegression,Pressure_0_Position_YPos,rmse,1.7176272449096435,0.21885184760776946
+PLSRegression,Pressure_0_Position_YPos,mae,1.382634355840045,0.13828986019029132
+PLSRegression,Pressure_0_Position_YPos,r2,0.06826605838689967,0.0373017513486711

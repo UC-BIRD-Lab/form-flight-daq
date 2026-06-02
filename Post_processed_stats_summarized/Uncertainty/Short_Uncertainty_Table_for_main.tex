@@ -1,0 +1,25 @@
+        \begin{table}[htbp]
+        \centering
+        \footnotesize
+        \setlength{\tabcolsep}{4pt}
+        \renewcommand{\arraystretch}{1.0}
+        \caption{Key measurement uncertainties in the formation-flight experiment. Mean and range are computed across all test positions and angles of attack. See Table~\ref{tab:uncertainty_summary} in the Supplementary Information for a complete breakdown.}
+        \label{tab:uncertainty_short}
+        \begin{tabular}{p{1.6cm} p{2.0cm} p{3.5cm} p{1.1cm} p{2.0cm} p{1.1cm}}
+        \hline
+        \textbf{Category} & \textbf{Item} & \textbf{Method} & \textbf{Mean} & \textbf{Range} & \textbf{Units} \\
+        \hline
+        \multirow{2}{*}{Equipment} & Tap transducer & Omega PX165-001B; $\pm$1\% of $\pm$248.8\,Pa range & 2.4880 & --- & Pa \\
+        \hline
+         & $F\_{x,y}$ (load cell) & ATI Mini40; manufacturer precision & 0.0200 & --- & N \\
+        \hline
+        \multirow{1}{*}{Positioning} & $\Delta x,\, \Delta y,\, \Delta z$ & Half of ruler smallest division (1/16 in.) & 0.0312 & --- & in. \\
+        \hline
+        \multirow{2}{*}{Measurement} & $\Delta p$ (upper taps) & Autocorrelation-corrected; pooled across 12 taps & 2.9145 & 0.9409 -- 103.9752 & Pa \\
+        \hline
+         & L/D & Autocorrelation-corrected; sting-corrected lift and drag & 0.8635 & 0.2581 -- 5.1058 & nondim. \\
+        \hline
+        \multirow{1}{*}{Derived} & $\Delta$(L/D) & Propagated from formation and baseline L/D & 0.9970 & 0.3689 -- 5.1214 & nondim. \\
+        \hline
+        \end{tabular}
+        \end{table}

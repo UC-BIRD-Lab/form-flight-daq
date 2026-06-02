@@ -1,0 +1,19 @@
+        \begin{table}[htbp]
+        \centering
+        \captionsetup{font=footnotesize}
+        \caption{XGBoost grouped nested CV RMSE (mean\,$\pm$\,std across outer folds) for all pressure-tap and position-predictor combinations. The crossed cell (\textbf{N/A}) has no predictors.}
+        \footnotesize
+        \setlength{\tabcolsep}{5pt}
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{l|ccccc}
+        \hline\hline
+        \textbf{Pressure taps} & \textbf{None} & \textbf{$\mathrm{d}x$} & \textbf{$\mathrm{d}y$} & \textbf{$\mathrm{d}z$} & \textbf{$\mathrm{d}x$+$\mathrm{d}y$+$\mathrm{d}z$} \\
+        \hline
+        All 12\,$\Delta p$ & 1.57\,$\pm$\,0.11 & 0.54\,$\pm$\,0.09 & 1.58\,$\pm$\,0.11 & 1.60\,$\pm$\,0.10 & 0.53\,$\pm$\,0.09 \\
+        6 selected\,$\Delta p$ & 1.60\,$\pm$\,0.11 & 0.65\,$\pm$\,0.07 & 1.62\,$\pm$\,0.11 & 1.58\,$\pm$\,0.11 & 0.62\,$\pm$\,0.05 \\
+        Naris-tap pair & 1.61\,$\pm$\,0.15 & 0.71\,$\pm$\,0.07 & 1.62\,$\pm$\,0.13 & 1.61\,$\pm$\,0.17 & 0.61\,$\pm$\,0.06 \\
+        None & \textbf{N/A} & 1.07\,$\pm$\,0.14 & 1.70\,$\pm$\,0.19 & 1.79\,$\pm$\,0.21 & 0.85\,$\pm$\,0.06 \\
+        \hline
+        \end{tabular}
+        \label{tab:heatmap_rmse}
+        \end{table}

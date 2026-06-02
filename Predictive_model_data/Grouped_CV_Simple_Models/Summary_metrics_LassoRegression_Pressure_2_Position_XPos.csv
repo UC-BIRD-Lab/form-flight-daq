@@ -1,0 +1,4 @@
+model_name,predictor_set_name,metric,mean,std
+LassoRegression,Pressure_2_Position_XPos,rmse,1.1706314260897823,0.14700605842901768
+LassoRegression,Pressure_2_Position_XPos,mae,0.9593142601642123,0.08642250020673428
+LassoRegression,Pressure_2_Position_XPos,r2,0.5663974745774116,0.031014228106357802

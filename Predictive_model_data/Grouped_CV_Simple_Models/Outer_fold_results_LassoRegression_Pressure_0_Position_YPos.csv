@@ -1,0 +1,6 @@
+model_name,outer_fold,n_train_rows,n_test_rows,n_train_groups,n_test_groups,rmse,mae,r2,best_params_json,best_inner_rmse,best_alpha,predictor_set_name
+LassoRegression,1,460,116,230,58,1.461914185672409,1.2104283838357286,0.1078593033135018,"{""model__alpha"": 0.001}",1.7825488067895765,0.001,Pressure_0_Position_YPos
+LassoRegression,2,460,116,230,58,1.7598914601064908,1.4563629582370858,0.09716229217371553,"{""model__alpha"": 0.0001}",1.7159320184725417,0.0001,Pressure_0_Position_YPos
+LassoRegression,3,460,116,230,58,2.0093549434149693,1.5525789790030213,0.058669715587859494,"{""model__alpha"": 0.001}",1.648546344442065,0.001,Pressure_0_Position_YPos
+LassoRegression,4,462,114,231,57,1.813028165538865,1.4173934953975975,0.013152169355206689,"{""model__alpha"": 0.001}",1.6991001735082851,0.001,Pressure_0_Position_YPos
+LassoRegression,5,462,114,231,57,1.5439162776171806,1.2764076190052565,0.06452022679143177,"{""model__alpha"": 0.0001}",1.7633105592903775,0.0001,Pressure_0_Position_YPos

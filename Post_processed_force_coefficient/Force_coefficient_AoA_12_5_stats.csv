@@ -1,0 +1,2 @@
+Date,AoA,Density (kg/m^3),Density Error (+/- kg/m^3),Velocity (m/s),Velocity Error (+/- m/s),Lift Coefficient,Lift Coefficient Error,Drag Coefficient,Drag Coefficient Error
+2024_04_01,12_5,1.2032228179775706,0.0012068492673149,20.94774051756411,0.10116074907654388,0.738412350392141,0.04020846665563024,0.3703019919677554,0.022761299056311725

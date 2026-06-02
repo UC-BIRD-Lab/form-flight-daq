@@ -1,0 +1,4 @@
+metric,mean,std,predictor_set_name
+rmse,0.7874896725917064,0.01270616687344363,Pressure_2_Position_XPos_YPos_ZPos
+mae,0.5675883193093082,0.007852498998935377,Pressure_2_Position_XPos_YPos_ZPos
+r2,0.7445167486467957,0.008252730205139072,Pressure_2_Position_XPos_YPos_ZPos

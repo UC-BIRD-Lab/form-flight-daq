@@ -1,0 +1,26 @@
+        \textbf{ID} & \textbf{Model type} & \textbf{Model predictor} & 
+        \multicolumn{2}{c}{\textbf{RMSE}} \\
+         & & & \textit{Train data} & \textit{Test data} \\
+         & & & \textit{(Test I)} & \textit{(Test II)} \\
+        \hline
+        a & \multirow[t]{4}{*}{GAM} & 12 $\Delta p$ + AoA & 1.521 & 1.417 \\
+        b &  & 12 $\Delta p$ + AoA + dx + dy + dz & 0.935 & 1.073 \\
+        c &  & 12 $\Delta p$ & 1.523 & 1.440 \\
+        d &  & 12 $\Delta p$ + dx + dy + dz & 0.932 & 1.110 \\
+        \hline
+        e & \multirow[t]{4}{*}{LM} & 12 $\Delta p$ + AoA & 1.608 & 1.462 \\
+        f &  & 12 $\Delta p$ + AoA + dx + dy + dz & 1.027 & 1.010 \\
+        g &  & 12 $\Delta p$ & 1.633 & 1.491 \\
+        h &  & 12 $\Delta p$ + dx + dy + dz & 1.045 & 1.076 \\
+        \hline
+        i & \multirow[t]{4}{*}{RF} & 12 $\Delta p$ + AoA & 1.727 & 1.533 \\
+        j &  & 12 $\Delta p$ + AoA + dx + dy + dz & 0.546 & 0.650 \\
+        k &  & 12 $\Delta p$ & 1.724 & 1.536 \\
+        l &  & 12 $\Delta p$ + dx + dy + dz & 0.525 & 0.654 \\
+        \hline
+        m & \multirow[t]{4}{*}{XGBoost} & 12 $\Delta p$ + AoA & 1.693 & 1.492 \\
+        n &  & 12 $\Delta p$ + AoA + dx + dy + dz & 0.521 & 0.659 \\
+        o &  & 12 $\Delta p$ & 1.675 & 1.530 \\
+        \rowcolor{gray!20}
+        p &  & 12 $\Delta p$ + dx + dy + dz & 0.536 & 0.677 \\
+        \hline

@@ -1,0 +1,2 @@
+n_estimators,max_depth,learning_rate,subsample,colsample_bytree,min_child_weight,gamma,reg_lambda,reg_alpha,predictor_set_name,nested_cv_fold_index
+23,4,0.1108096930877339,0.6,1.0,6.635854211516154,0.3512930010709676,1.421121325387326,1.190298677492872,Pressure_6_Position_None,0

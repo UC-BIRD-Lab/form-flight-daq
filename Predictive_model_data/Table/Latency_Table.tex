@@ -1,0 +1,20 @@
+        \begin{table}[htbp]
+        \centering
+        \captionsetup{font=footnotesize}
+        \caption{Single-sample inference latency aggregated across all predictor set configurations, benchmarked on an Intel Core i9-10850K CPU. $\Delta$ vs XGBoost shows the mean latency difference relative to XGBoost (negative = faster than XGBoost).}
+        \footnotesize
+        \setlength{\tabcolsep}{5pt}
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{l|ccc}
+        \hline\hline
+        \textbf{Model} & \textbf{Mean (ms)} & \textbf{Std (ms)} & \textbf{$\Delta$ vs XGBoost (ms)} \\
+        \hline
+        Ridge Reg. & 0.3873 & 0.0662 & -0.2677 \\
+        Lasso Reg. & 0.4176 & 0.0933 & -0.2374 \\
+        Linear Reg. & 0.4272 & 0.0290 & -0.2278 \\
+        PLS Reg. & 0.4323 & 0.0798 & -0.2227 \\
+        XGBoost & 0.6550 & 0.3612 & --- \\
+        \hline
+        \end{tabular}
+        \label{tab:latency}
+        \end{table}

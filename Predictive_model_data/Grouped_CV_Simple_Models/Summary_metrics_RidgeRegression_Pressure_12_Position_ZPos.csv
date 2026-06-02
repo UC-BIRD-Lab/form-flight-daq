@@ -1,0 +1,4 @@
+model_name,predictor_set_name,metric,mean,std
+RidgeRegression,Pressure_12_Position_ZPos,rmse,1.5725894171315882,0.11917167011223094
+RidgeRegression,Pressure_12_Position_ZPos,mae,1.3322512344903614,0.07388659918205327
+RidgeRegression,Pressure_12_Position_ZPos,r2,0.20980319111561346,0.07717998232461022

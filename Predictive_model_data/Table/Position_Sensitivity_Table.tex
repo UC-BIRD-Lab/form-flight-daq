@@ -1,0 +1,21 @@
+        \begin{table}[htbp]
+        \centering
+        \captionsetup{font=footnotesize}
+        \caption{CV-RMSE across model classes for the 12$\Delta p$ predictor set augmented with individual position components. The lowest RMSE per row is \textbf{bolded}. Comparing columns isolates the contribution of each position axis (dx, dy, dz) beyond the pressure-only baseline, and assesses whether dx alone captures most of the positional information.}
+        \footnotesize
+        \setlength{\tabcolsep}{5pt}
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{l|ccccc}
+        \hline\hline
+        \textbf{Model} & \multicolumn{5}{c}{\textbf{CV-RMSE (mean $\pm$ std)}} \\
+         & \textit{12$\Delta p$} & \textit{12$\Delta p$+dx} & \textit{12$\Delta p$+dy} & \textit{12$\Delta p$+dz} & \textit{12$\Delta p$+dx,dy,dz} \\
+        \hline
+        Linear Reg. & 1.570 $\pm$ 0.122 & \textbf{1.062 $\pm$ 0.094} & 1.577 $\pm$ 0.119 & 1.576 $\pm$ 0.117 & 1.066 $\pm$ 0.091 \\
+        Ridge Reg. & 1.567 $\pm$ 0.124 & \textbf{1.054 $\pm$ 0.101} & 1.574 $\pm$ 0.120 & 1.573 $\pm$ 0.119 & 1.062 $\pm$ 0.093 \\
+        Lasso Reg. & 1.569 $\pm$ 0.121 & \textbf{1.051 $\pm$ 0.099} & 1.575 $\pm$ 0.119 & 1.575 $\pm$ 0.117 & 1.057 $\pm$ 0.095 \\
+        PLS Reg. & 1.574 $\pm$ 0.114 & \textbf{1.053 $\pm$ 0.099} & 1.579 $\pm$ 0.110 & 1.580 $\pm$ 0.107 & 1.060 $\pm$ 0.091 \\
+        XGBoost & 1.569 $\pm$ 0.113 & 0.539 $\pm$ 0.089 & 1.582 $\pm$ 0.106 & 1.601 $\pm$ 0.100 & \textbf{0.531 $\pm$ 0.089} \\
+        \hline
+        \end{tabular}
+        \label{tab:position_sensitivity}
+        \end{table}

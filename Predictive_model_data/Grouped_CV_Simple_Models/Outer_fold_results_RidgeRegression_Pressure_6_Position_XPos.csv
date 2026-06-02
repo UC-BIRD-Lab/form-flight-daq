@@ -1,0 +1,6 @@
+model_name,outer_fold,n_train_rows,n_test_rows,n_train_groups,n_test_groups,rmse,mae,r2,best_params_json,best_inner_rmse,best_alpha,predictor_set_name
+RidgeRegression,1,460,116,230,58,1.032068614127725,0.8767334533903715,0.5553618396834055,"{""model__alpha"": 10}",1.1428623903895638,10,Pressure_6_Position_XPos
+RidgeRegression,2,460,116,230,58,1.079795524902536,0.9137342370737691,0.6601236323112618,"{""model__alpha"": 10}",1.1293339644403053,10,Pressure_6_Position_XPos
+RidgeRegression,3,460,116,230,58,1.285985045974771,0.968723972446824,0.6144323854416917,"{""model__alpha"": 10}",1.0754357019430159,10,Pressure_6_Position_XPos
+RidgeRegression,4,462,114,231,57,1.1599431253469994,0.930737574466504,0.5960622152037469,"{""model__alpha"": 10}",1.103286592576556,10,Pressure_6_Position_XPos
+RidgeRegression,5,462,114,231,57,1.0379343030296893,0.8876377274900848,0.5772081175739632,"{""model__alpha"": 10}",1.1346043967163186,10,Pressure_6_Position_XPos

@@ -1,0 +1,4 @@
+model_name,predictor_set_name,metric,mean,std
+LinearRegression,Pressure_6_Position_XPos_YPos_ZPos,rmse,1.1285278942604953,0.08666032042529931
+LinearRegression,Pressure_6_Position_XPos_YPos_ZPos,mae,0.920604778330666,0.017158641707617397
+LinearRegression,Pressure_6_Position_XPos_YPos_ZPos,r2,0.5908258547830973,0.06237752731108131

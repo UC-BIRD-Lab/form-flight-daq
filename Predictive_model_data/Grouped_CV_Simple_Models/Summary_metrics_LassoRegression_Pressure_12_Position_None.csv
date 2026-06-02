@@ -1,0 +1,4 @@
+model_name,predictor_set_name,metric,mean,std
+LassoRegression,Pressure_12_Position_None,rmse,1.568849844883941,0.12114018685421758
+LassoRegression,Pressure_12_Position_None,mae,1.3250282263087634,0.07841725542039182
+LassoRegression,Pressure_12_Position_None,r2,0.2132474032631179,0.08224774753469101

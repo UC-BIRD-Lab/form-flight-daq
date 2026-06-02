@@ -1,0 +1,55 @@
+        \footnotesize
+        \renewcommand{\arraystretch}{0.75}
+        \begin{longtable}{l p{1.8cm} p{4.0cm} r p{1.8cm} l}
+        \caption{Measurement system uncertainty summary across all test configurations.} \label{tab:uncertainty_summary} \\
+        \hline
+        \textbf{Category} & \textbf{Item} & \textbf{Method} & \textbf{Mean} & \textbf{Range} & \textbf{Units} \\
+        \hline
+        \endfirsthead
+        \hline
+        \textbf{Category} & \textbf{Item} & \textbf{Method} & \textbf{Mean} & \textbf{Range} & \textbf{Units} \\
+        \hline
+        \endhead
+        \hline \multicolumn{6}{r}{\textit{Continued on next page}} \\
+        \endfoot
+        \hline
+        \endlastfoot
+        \multirow{5}{*}{Equipment} & $F\_{x,y}$ (load cell) & ATI Mini40; manufacturer precision & 0.0200 & --- & N \\
+        \cline{2-6}
+         & $F\_z$ (load cell) & ATI Mini40; manufacturer precision & 0.0400 & --- & N \\
+        \cline{2-6}
+         & Torque (load cell) & ATI Mini40; manufacturer precision & 0.0005 & --- & Nm \\
+        \cline{2-6}
+         & Pitot transducer & Omega PX2650; $\pm$1\% of $\pm$1244.2\,Pa range & 12.4420 & --- & Pa \\
+        \cline{2-6}
+         & Tap transducer & Omega PX165-001B; $\pm$1\% of $\pm$248.8\,Pa range & 2.4880 & --- & Pa \\
+        \hline
+        \multirow{1}{*}{Positioning} & $\Delta x,\, \Delta y,\, \Delta z$ & Half of ruler smallest division (1/16 in.) & 0.0312 & 0.0312 -- 0.0312 & in. \\
+        \hline
+        \multirow{5}{*}{Baseline} & L/D & Propagated from reference position (Y=0, Z=0) lift and drag & 0.3985 & 0.2611 -- 0.5361 & nondim. \\
+        \cline{2-6}
+         & Velocity & Averaged across all $\alpha$ values from polar runs & 0.1099 & 0.0984 -- 0.1225 & m/s \\
+        \cline{2-6}
+         & $C\_{L}$ & Averaged across all $\alpha$ values from polar runs & 0.0326 & 0.0226 -- 0.0411 & nondim. \\
+        \cline{2-6}
+         & $C\_{D}$ & Averaged across all $\alpha$ values from polar runs & 0.0206 & 0.0154 -- 0.0280 & nondim. \\
+        \cline{2-6}
+         & Pressure & Autocorrelation-corrected; pooled across 12 upper-surface taps & 1.6879 & 0.6825 -- 4.7854 & Pa \\
+        \hline
+        \multirow{2}{*}{Sting/strut} & Lift & Autocorrelation-corrected; propagated from sting-only run and sting bias & 0.0557 & 0.0439 -- 0.1426 & N \\
+        \cline{2-6}
+         & Drag & Autocorrelation-corrected; propagated from sting-only run and sting bias & 0.0365 & 0.0242 -- 0.1279 & N \\
+        \hline
+        \multirow{4}{*}{Formation run} & Lift force & Autocorrelation-corrected; propagated from test and bias runs & 0.1398 & 0.0842 -- 0.5492 & N \\
+        \cline{2-6}
+         & Drag force & Autocorrelation-corrected; propagated from test and bias runs & 0.0720 & 0.0443 -- 0.2306 & N \\
+        \cline{2-6}
+         & $\Delta p$ & Autocorrelation-corrected; pooled across 12 upper-surface taps & 2.9145 & 0.9409 -- 103.9752 & Pa \\
+        \cline{2-6}
+         & Pitot pressure & Autocorrelation-corrected; propagated from pitot test and bias runs & 4.0059 & 3.5418 -- 4.9651 & Pa \\
+        \hline
+        \multirow{2}{*}{Derived} & L/D & Propagated from sting-corrected lift and drag via ratio rule & 0.8635 & 0.2581 -- 5.1058 & nondim. \\
+        \cline{2-6}
+         & $\Delta$(L/D) & Propagated from formation L/D and baseline L/D & 0.9970 & 0.3689 -- 5.1214 & nondim. \\
+        \hline
+        \end{longtable}

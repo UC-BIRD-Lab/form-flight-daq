@@ -1,0 +1,35 @@
+        \begin{table}[htbp]
+        \centering
+        \captionsetup{font=footnotesize}
+        \caption{XGBoost robustness evaluation: models trained on Iter.~0 and tested on Iter.~1 using five independent random seeds. Small \textit{Std} across seeds indicates stable, reproducible predictions regardless of random initialization. \textit{CV-RMSE} is the mean outer-fold RMSE from grouped nested CV on the combined dataset; $|\Delta| = |\text{Avg.} - \text{CV-RMSE}|$ measures the cross-iteration generalization gap --- small $|\Delta|$ confirms the model generalizes to an unseen iteration as well as it does within cross-validation. The minimum RMSE per row is shaded.}
+        \footnotesize
+        \setlength{\tabcolsep}{5pt}
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{l|ccccc|cc|cc}
+        \hline\hline
+        \textbf{Predictor set} & \multicolumn{5}{c|}{\textbf{RMSE (seeds)}} & \textbf{Avg.} & \textbf{Std} & \textbf{CV-RMSE} & \textbf{$|\Delta|$} \\
+         & \textit{Seed: 0} & \textit{7} & \textit{21} & \textit{42} & \textit{84} & & & & \\
+        \hline
+        2$\Delta p$ & 1.690 & \cellcolor{gray!20}{1.674} & 1.712 & 1.712 & 1.686 & 1.695 & 0.017 & 1.611 & 0.084 \\
+        6$\Delta p$ & 1.613 & 1.610 & 1.592 & 1.650 & \cellcolor{gray!20}{1.591} & 1.611 & 0.024 & 1.598 & 0.013 \\
+        12$\Delta p$ & \cellcolor{gray!20}{1.518} & 1.568 & 1.612 & 1.552 & 1.525 & 1.555 & 0.038 & 1.569 & 0.014 \\
+        dx & \cellcolor{gray!20}{1.100} & 1.104 & 1.118 & 1.107 & 1.113 & 1.108 & 0.007 & 1.069 & 0.039 \\
+        dy & 1.590 & 1.582 & 1.576 & 1.577 & \cellcolor{gray!20}{1.571} & 1.579 & 0.007 & 1.700 & 0.121 \\
+        dz & 1.616 & 1.623 & 1.627 & \cellcolor{gray!20}{1.613} & 1.613 & 1.618 & 0.006 & 1.785 & 0.167 \\
+        dx,dy,dz & \cellcolor{gray!20}{1.016} & \cellcolor{gray!20}{1.016} & \cellcolor{gray!20}{1.016} & \cellcolor{gray!20}{1.016} & \cellcolor{gray!20}{1.016} & 1.016 & 0.000 & 0.852 & 0.164 \\
+        2$\Delta p$+dx & \cellcolor{gray!20}{0.796} & 0.804 & 0.800 & 0.802 & 0.799 & 0.800 & 0.003 & 0.709 & 0.091 \\
+        2$\Delta p$+dy & 1.771 & 1.747 & \cellcolor{gray!20}{1.743} & 1.783 & 1.747 & 1.758 & 0.018 & 1.619 & 0.139 \\
+        2$\Delta p$+dz & 1.631 & 1.627 & \cellcolor{gray!20}{1.616} & 1.665 & 1.649 & 1.638 & 0.020 & 1.606 & 0.032 \\
+        2$\Delta p$+dx,dy,dz & 0.802 & 0.776 & 0.799 & 0.785 & \cellcolor{gray!20}{0.775} & 0.787 & 0.013 & 0.614 & 0.173 \\
+        6$\Delta p$+dx & 0.749 & \cellcolor{gray!20}{0.733} & 0.767 & 0.761 & 0.746 & 0.751 & 0.013 & 0.647 & 0.104 \\
+        6$\Delta p$+dy & 1.610 & 1.653 & 1.643 & \cellcolor{gray!20}{1.571} & 1.574 & 1.610 & 0.038 & 1.616 & 0.006 \\
+        6$\Delta p$+dz & 1.628 & 1.584 & \cellcolor{gray!20}{1.569} & 1.619 & 1.627 & 1.605 & 0.027 & 1.583 & 0.023 \\
+        6$\Delta p$+dx,dy,dz & 0.747 & \cellcolor{gray!20}{0.723} & 0.727 & 0.725 & 0.736 & 0.732 & 0.010 & 0.616 & 0.116 \\
+        12$\Delta p$+dx & \cellcolor{gray!20}{0.685} & 0.734 & 0.712 & 0.725 & 0.704 & 0.712 & 0.019 & 0.539 & 0.174 \\
+        12$\Delta p$+dy & 1.546 & 1.512 & 1.509 & \cellcolor{gray!20}{1.491} & 1.517 & 1.515 & 0.020 & 1.582 & 0.067 \\
+        12$\Delta p$+dz & 1.602 & 1.578 & 1.579 & 1.582 & \cellcolor{gray!20}{1.572} & 1.582 & 0.012 & 1.601 & 0.018 \\
+        12$\Delta p$+dx,dy,dz & 0.714 & 0.732 & 0.711 & 0.739 & \cellcolor{gray!20}{0.687} & 0.717 & 0.020 & 0.531 & 0.185 \\
+        \hline
+        \end{tabular}
+        \label{tab:robustness}
+        \end{table}

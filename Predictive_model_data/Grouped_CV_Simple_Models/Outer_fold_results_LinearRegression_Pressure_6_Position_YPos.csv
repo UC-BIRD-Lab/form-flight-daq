@@ -1,0 +1,6 @@
+model_name,outer_fold,n_train_rows,n_test_rows,n_train_groups,n_test_groups,rmse,mae,r2,best_params_json,best_inner_rmse,predictor_set_name
+LinearRegression,1,460,116,230,58,1.5123048893193007,1.2513924180402378,0.045296965663066735,,,Pressure_6_Position_YPos
+LinearRegression,2,460,116,230,58,1.6627578807645962,1.396203474224141,0.19407254380153116,,,Pressure_6_Position_YPos
+LinearRegression,3,460,116,230,58,1.8436072179847878,1.5010713711419015,0.2075616021982395,,,Pressure_6_Position_YPos
+LinearRegression,4,462,114,231,57,1.643435232185585,1.3629370943501349,0.18913925650661378,,,Pressure_6_Position_YPos
+LinearRegression,5,462,114,231,57,1.465307390089459,1.2368801272970318,0.15735550189816938,,,Pressure_6_Position_YPos
