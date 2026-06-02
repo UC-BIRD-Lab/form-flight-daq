@@ -474,8 +474,8 @@ stopifnot(all(c(y_col, cols_all) %in% names(data_model_test_full)))
 oob_rmse <- function(rf) sqrt(tail(rf$mse, 1))
 
 tune_mtry <- function(df_train, y_col, x_cols,
-                      stepFactor = 1.2, improve = 0.01,
-                      ntreeTry = 300, trace = TRUE) {
+                      stepFactor = 1.0, improve = 0.005,
+                      ntreeTry = 100, trace = TRUE) {
   x <- df_train[, x_cols, drop = FALSE]
   y <- df_train[[y_col]]
   tf <- tuneRF(
@@ -490,7 +490,7 @@ tune_mtry <- function(df_train, y_col, x_cols,
 }
 
 fit_eval_rf <- function(df_train, df_test, y_col, x_cols,
-                        mtry, ntree = 2000, importance = TRUE) {
+                        mtry, ntree = 800, importance = TRUE) {
   fmla <- as.formula(paste(y_col, "~", paste(x_cols, collapse = " + ")))
   rf <- randomForest(
     formula = fmla,
@@ -779,7 +779,7 @@ long <- clean %>%
   select(ID, ModelType, Group, RMSE_Train, RMSE_Test) %>%
   pivot_longer(c(RMSE_Train, RMSE_Test),
                names_to = "Dataset", values_to = "RMSE") %>%
-  mutate(Dataset = recode(Dataset, RMSE_Train = "Iteration 0", RMSE_Test = "Iteration 1")) %>%
+  mutate(Dataset = recode(Dataset, RMSE_Train = "Iteration 1 (training-set)", RMSE_Test = "Iteration 2 (Testing-set)")) %>%
   arrange(ModelType, ID, Dataset)
 
 # --- plot ---
@@ -806,11 +806,7 @@ print(model_RMSE_plot)
 if (!dir.exists("Predictive_model_data")) dir.create("Predictive_model_data")
 if (!dir.exists("Predictive_model_data/plot")) dir.create("Predictive_model_data/plot")
 
-ggsave("Predictive_model_data/plot/Model_performance_RMSE_Plot.svg",
-       plot = model_RMSE_plot,
-       device = svglite::svglite,
-       width = 9, height = 5, units = "in",
-       bg = "transparent")
+ggsave("Predictive_model_data/plot/Model_performance_RMSE_Plot.svg", plot = model_RMSE_plot, device = svglite::svglite, width = 9, height = 5, units = "in", bg = "transparent")
 ```
 
 ## Latex table converter

@@ -172,8 +172,7 @@ def plot_combination_mi_local_normalized(data_path, output_folder):
     os.makedirs(output_folder_norm, exist_ok=True)
 
     # Define x-axis labels for consistent tick labels (pressure tap index locations)
-    xticks_labels = [0, 2, 4, 6, 8, 9, 10, 11, 13, 15, 17, 19]
-
+    xticks_labels = [0, 2, 4, 6, 8, 9, 10, 11, 13, 15, 17, 19] # For grabbing the tap index from metadata, but for the paper, we want to show all the taps with 1-12 as the labels
     num_min = 2
     num_max = 9
     all_tap_scores_records = []
@@ -301,10 +300,11 @@ def plot_combination_mi_local_normalized(data_path, output_folder):
     #                 cmap='cividis', norm=norm, s=500)
         
     # Set plot labels and title
+    xticks_labels_show = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] # This is for presentation of the taps, but for the paper, we want to show all the taps with 1-12 as the labels
     ax.set_xlabel('Pressure Tap Index (#)', fontsize=8)
     ax.set_ylabel('Local Normalized Summed MI Value', fontsize=8)
-    ax.set_xticks(range(len(xticks_labels)))
-    ax.set_xticklabels(xticks_labels, fontsize=8)
+    ax.set_xticks(range(len(xticks_labels_show)))
+    ax.set_xticklabels(xticks_labels_show, fontsize=8)
     ax.tick_params(axis='y', labelsize=8)
 
     cbar_ax = fig.add_axes([0.91, 0.11, 0.03, 0.77]) 
@@ -526,8 +526,9 @@ def plot_combination_mi_local_normalized_subplots(bin_range, data_folder, output
             ax.scatter(filtered['Pressure Tap Index'].to_numpy(), norm_mi_scores,
                        color=colormap(norm(i)), s=15, marker='o', alpha=1.0)
 
-        ax.set_xticks(range(len(xticks_labels)))
-        ax.set_xticklabels(xticks_labels, fontsize=7, rotation=45)
+        xticks_labels_show = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        ax.set_xticks(range(len(xticks_labels_show)))
+        ax.set_xticklabels(xticks_labels_show, fontsize=7, rotation=45)
         ax.tick_params(axis='both', labelsize=7)
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
@@ -575,19 +576,19 @@ if __name__ == "__main__":
     # plot_combination_mi_vs_num_taps(data_path_combination_iter_1, output_folder_iter_1)
 
     # # Plot 3: Combination MI Results Local Normalized Summed MI Values with 28 bins
-    plot_combination_mi_local_normalized(data_path_combination, output_folder)
-    plot_combination_mi_local_normalized(data_path_combination_iter_1, output_folder_iter_1)
+    # plot_combination_mi_local_normalized(data_path_combination, output_folder)
+    # plot_combination_mi_local_normalized(data_path_combination_iter_1, output_folder_iter_1)
 
-    # # Sensitivity analysis subplots for bins 15 to 31
-    # bin_range = range(15, 32, 1)
+    # Sensitivity analysis subplots for bins 15 to 31
+    bin_range = range(15, 32, 1)
     # plot_individual_mi_results_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
     # plot_combination_mi_vs_num_taps_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
-    # plot_combination_mi_local_normalized_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
+    plot_combination_mi_local_normalized_subplots(bin_range, "MI_results", "MI_results/Plots/Sensitivity_Analysis")
 
-    # # Iter1 sensitivity analysis subplots for bins 15 to 31
+    # Iter1 sensitivity analysis subplots for bins 15 to 31
     # plot_individual_mi_results_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
     # plot_combination_mi_vs_num_taps_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
-    # plot_combination_mi_local_normalized_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
+    plot_combination_mi_local_normalized_subplots(bin_range, "MI_results_iter1", "MI_results_iter1/Plots/Sensitivity_Analysis", file_suffix="_iter1")
 
 
 
