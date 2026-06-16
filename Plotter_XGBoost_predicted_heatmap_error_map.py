@@ -169,7 +169,7 @@ def plot_xgb_error_heatmap(df, save_file_path):
     error_3_3 = pred_3_3 - actual_3_3
 
     cmap = LinearSegmentedColormap.from_list(
-        'teal_white_coral', ['#c84b2f', '#ffffff', '#0a7e6e']
+        'amber_white_teal', ['#c87d0a', '#ffffff', '#0a7e6e']
     )
     vmin = -4
     vmax = 4
@@ -414,7 +414,6 @@ if __name__ == '__main__':
     raw_pred_dir  = 'Predictive_model_data/Latency_Benchmark/Raw_prediction_tables'
     predicted_dir = 'Predictive_model_data/Plots/XGBoost_predicted_heatmap'
     error_dir     = 'Predictive_model_data/Plots/XGBoost_Error_map'
-
     abs_error_dir = 'Predictive_model_data/Plots/XGBoost_Abs_Error_map'
 
     if not os.path.exists(predicted_dir):
@@ -441,7 +440,7 @@ if __name__ == '__main__':
     if not os.path.exists(assembled_dir):
         os.makedirs(assembled_dir)
     error_cmap = LinearSegmentedColormap.from_list(
-        'teal_white_coral', ['#c84b2f', '#ffffff', '#0a7e6e']
+        'amber_white_teal', ['#c87d0a', '#ffffff', '#0a7e6e']
     )
     # error_cmap = LinearSegmentedColormap.from_list(
     #     'teal_white_coral', ['#0a7e6e','#ffffff', '#c84b2f']

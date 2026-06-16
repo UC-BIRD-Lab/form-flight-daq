@@ -1,7 +1,7 @@
 # Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight
 Github code for paper: **Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight**
 
-Last modified (this README.md): `7 Nov 2025` by `Huanglun(Adam) Zhu`
+Last modified (this README.md): `15 Jun 2026` by `Huanglun(Adam) Zhu`
 
 ---
 
@@ -33,6 +33,7 @@ This repository contains all scripts used in the paper for:
 - [10. LaTeX Conversion (Python)](#10-latex-conversion-python)
 - [Appendix A. Notation & Definitions](#appendix-a-notation--definitions)
 - [Appendix B. Paths & Outputs Summary](#appendix-b-paths--outputs-summary)
+- [Appendix C. Archived Scripts](#appendix-c-archived-scripts)
 
 ---
 
@@ -151,42 +152,46 @@ Quantifies how much information **pressure-set signals** share with **aerodynami
 ---
 
 ## 8) Predictive Model (Python)
-XGBoost-based predictive modeling and Bayesian hyperparameter optimization for formation-flight analysis.
+XGBoost and simple-model (OLS/Ridge/Lasso/PLS) predictive modeling for formation-flight analysis. The current workflow uses **grouped nested cross-validation**, keyed on `(XPos, YPos, ZPos, AoA)`, so repeated Iter 0 / Iter 1 measurements of the same aerodynamic configuration never split across CV folds. The original single train/test Bayesian-tuned workflow has been superseded by this and moved to `Archive_script/` (see [Appendix C](#appendix-c-archived-scripts)).
 
-### 8.1 `PredModel_Bayes_Optimization_HyperP_XGBoost_P_to_LD.py`
-- Bayesian optimization with **6-fold CV**, **1000 iterations**, **20 random initializations**, fixed random seed  
-- **Inputs**
-  - `Post_processed_stats_summarized/L_D_True_Stats_Iter_0.csv`  
-  - `Post_processed_stats_summarized/L_D_True_Stats_Iter_1.csv`  
-  - `Post_processed_stats_summarized/Pressure_True_Stats_Iter_0.csv`  
-  - `Post_processed_stats_summarized/Pressure_True_Stats_Iter_1.csv`
-- **Output**
-  - CSV of Bayesian hyperparameter-tuning results
-- **Note**
-  - Each predictor configuration (tap count, AoA, XYZ) tuned independently  
-  - Computationally intensive (~20 hours on Intel i9-10850K at full load)
-
-### 8.2 `PredModel_delta_pressure_interpolator.py`
+### 8.1 `PredModel_delta_pressure_interpolator.py`
 - Generates interpolated Δpressure dataset for overfitting sanity checks  
 - **Input:** `Post_processed_stats_summarized/Pressure_True_Stats_Iter_1.csv`  
 - **Output:** `Predictive_model_data/Interpolated_pressure_data/Pressure_True_Stats_Iter_1_Interpolated.csv`
 
-### 8.3 `PredModel_final_train_and_test.py`
-- Loads optimized hyperparameters and performs final XGBoost training  
-- 6-fold CV, early stopping, multiple fixed seeds for robustness  
-- Trained with the best_round from 6-fold CV on iteration 0 dataset, and test on iteration 1 dataset.
+### 8.2 `PredModel_Grouped_Nested_CV_Bayes_Optimization_HyperP_XGBoost.py`
+- Current XGBoost workflow: **5-outer x 5-inner grouped nested CV**, using `GroupKFold` so the inner Bayesian-optimization loop (20 random initializations + 100 iterations) never tunes on data leaked from the held-out outer fold  
+- Iterates over all `pressure_combo` x `position_combo` predictor-set combinations (0/2/6/12 pressure taps x None/X/Y/Z/XYZ position deltas)  
 - **Inputs**
-  - Same preprocessed CSVs as above  
-  - Tuning CSVs from **8.1**  
-  - Interpolated pressure data from **8.2**
-- **Outputs**
-  - Predicted vs actual ΔL/D (per tap configuration)  
-  - Metrics (RMSE, NRMSE)  
-  - Model prediction CSVs (output directory)
+  - `Post_processed_stats_summarized/L_D_True_Stats_Iter_0.csv`, `L_D_True_Stats_Iter_1.csv`  
+  - `Post_processed_stats_summarized/Pressure_True_Stats_Iter_0.csv`, `Pressure_True_Stats_Iter_1.csv`
+- **Outputs** (one set per predictor-set combination) written to `Predictive_model_data/Grouped_Nested_CV_XGB/`:
+  - `Outer_fold_results_*.csv`, `Summary_metrics_*.csv`, `Best_hyperparameters_*.csv`, `Bayes_search_history_*.csv`
 
-### 8.4 `PredModel_RMSE_summary_each_model_to_csv.py`
-- Loads files from **8.3** and selects the **best RMSE** across five fixed-seed models  
-- **Input:** Prediction CSVs from **8.3**  
+### 8.3 `PredModel_LM_PLS_Ridge_model.py`
+- Runs the same grouped 5-fold CV (with inner `GridSearchCV` tuning where applicable) for four simple linear baselines: Linear Regression, Ridge, Lasso, and PLS  
+- Uses the same 19 pressure/position predictor-set combinations as **8.2** so model-class comparisons stay aligned  
+- **Inputs:** same four `Post_processed_stats_summarized/` CSVs as **8.2**
+- **Outputs** written to `Predictive_model_data/Grouped_CV_Simple_Models/`:
+  - Per-model/predictor-set fold results and summaries, plus combined ranking/pivot tables (`Combined_summary_metrics.csv`, `Predictor_set_ranking_by_model.csv`, `Predictor_set_rmse_pivot_table.csv`)
+
+### 8.4 `PredModel_XGBoost_robustness_testing.py`
+- Re-trains XGBoost on the **full Iter 0** dataset and tests on the **full Iter 1** dataset across 5 fixed seeds, to check seed sensitivity outside of the CV splits  
+- Hyperparameters are loaded from **outer fold 1** (a fixed, non-selected fold) of **8.2**'s results, to avoid any impression of cherry-picking the best fold  
+- **Inputs:** same four summary CSVs as **8.2**, plus `Best_hyperparameters_*.csv` from **8.2**'s output folder
+- **Outputs** written to `Predictive_model_data/Iter0_Iter1_Robustness_XGB/`:
+  - Per-seed RMSE/MAE/R² and saved model files (`.json`), plus combined summaries across all predictor sets
+
+### 8.5 `PredModel_latency_test.py`
+- Benchmarks **single-sample inference latency** for XGBoost and the four simple models (loads the saved XGBoost models from **8.4**; refits simple models using **8.3**'s tuned settings if no saved model is found)  
+- Reports mean/median/min/max latency (ms) and predictions-per-second per model and predictor set, plus latency differences relative to the fastest model and to XGBoost  
+- **Inputs:** `Predictive_model_data/Iter0_Iter1_Robustness_XGB/` (**8.4**), `Predictive_model_data/Grouped_CV_Simple_Models/` (**8.3**)
+- **Outputs** written to `Predictive_model_data/Latency_Benchmark/`:
+  - `Latency_results_detailed.csv`, `Latency_results_ranked.csv`, `Latency_difference_by_model.csv`, `Latency_difference_by_predictor_set.csv`, and per-predictor-set raw prediction tables in `Raw_prediction_tables/`
+
+### 8.6 `PredModel_RMSE_summary_each_model_to_csv.py`
+- Loads files from the archived `PredModel_final_train_and_test.py` workflow and selects the **best RMSE** across five fixed-seed models  
+- **Input:** Prediction CSVs from the archived workflow (see [Appendix C](#appendix-c-archived-scripts))  
 - **Output:** One CSV with the best RMSE for each model
 
 ---
@@ -208,13 +213,7 @@ Publication-ready plots from processed summary CSVs.
      - `Combination_MI_vs_Num_Taps.svg` (MI vs number of taps)  
      - `Combination_MI_Local_Normalized.svg` (locally normalized summed MI)
 
-3. **`Plotter_heatmap_test_L_D_and_RMSE.py`**
-   - Predicted heatmaps from XGBoost results  
-   - Actual heatmap from Iteration 1 (test set)  
-   - Error heatmaps (prediction − actual)  
-   - Overall summary RMSE heatmap for each model
-
-4. **`Plotter_heatmap_from_experiment.py`**
+3. **`Plotter_heatmap_from_experiment.py`**
    - All ΔL/D heatmaps from experiments (Iterations 0 and 1)  
    - All Δpressure heatmaps from experiments (Iterations 0 and 1)  
    - **Input:** `Post_processed_stats_summarized/`  
@@ -223,14 +222,56 @@ Publication-ready plots from processed summary CSVs.
      - 6 Δpressure heatmaps  
      - Saved under `Post_processed_stats_summarized/Heatmaps_from_Experiment/`
 
-5. **`Plotter_colorbar.py`**
+4. **`Plotter_XGBoost_predicted_heatmap_error_map.py`**
+   - Predicted / error / absolute-error heatmaps for each pressure/position predictor set, built from the latency benchmark's raw per-sample predictions  
+   - Also assembles a combined PDF grid of error heatmaps across all predictor sets  
+   - **Input:** `Predictive_model_data/Latency_Benchmark/Raw_prediction_tables/Raw_predictions_*.csv` (from `PredModel_latency_test.py`, [8.5](#8-predictive-model-python))  
+   - **Outputs:**  
+     - `Predictive_model_data/Plots/XGBoost_Error_map/Heatmap_XGB_Error_*.svg` (one per predictor set)  
+     - `Predictive_model_data/Plots/XGBoost_results_assembled_grids/Assembled_XGB_Error_All.pdf`
+
+5. **`Plotter_heatmap_grouped_nested_cv.py`**
+   - Heatmap of grouped nested CV RMSE (mean across outer folds) across all pressure-tap x position-predictor combinations, plus a matching LaTeX table  
+   - **Input:** `Predictive_model_data/Grouped_Nested_CV_XGB/Summary_metrics_*.csv` (from `PredModel_Grouped_Nested_CV_Bayes_Optimization_HyperP_XGBoost.py`, [8.2](#8-predictive-model-python))  
+   - **Outputs:**  
+     - `Predictive_model_data/Plots/Heatmap_grouped_nested_cv_rmse.svg`  
+     - `Predictive_model_data/Table/Heatmap_RMSE_Table.tex`
+
+6. **`Plotter_heatmap_simple_models.py`**
+   - 2x2 grid of RMSE heatmaps (OLS, Ridge, Lasso, PLS) across pressure-tap x position-predictor combinations  
+   - **Input:** `Predictive_model_data/Grouped_CV_Simple_Models/Combined_summary_metrics.csv` (from `PredModel_LM_PLS_Ridge_model.py`, [8.3](#8-predictive-model-python))  
+   - **Output:** `Predictive_model_data/Grouped_CV_Simple_Models/Heatmap_simple_models_rmse.svg`
+
+7. **`Plotter_previous_hyperparameter_history.py`**
+   - Overlays running-best RMSE convergence curves from the archived Bayesian-optimization search histories, with a trial-100 cutoff marker and post-cutoff RMSE-gain annotation  
+   - **Input:** `Predictive_model_data_archive/Bayes_results_XGB_HyperP_using_dP_for_delta_L_D/*.csv`  
+   - **Output:** `Predictive_model_data/old_bayes_results/Bayes_convergence_all_predictors_absolute.pdf`
+
+8. **`Plotter_simpler_model_trend.py`**
+   - Two trend plots comparing simple-model RMSE (shaded mean±std envelope) against XGBoost (error bars): one across pressure-tap count, one across position-component additions  
+   - **Inputs:** `Predictive_model_data/Grouped_CV_Simple_Models/` ([8.3](#8-predictive-model-python)), `Predictive_model_data/Grouped_Nested_CV_XGB/` ([8.2](#8-predictive-model-python))  
+   - **Outputs:** `Predictive_model_data/Plots/Pressure_Tap_Trend.pdf`, `Predictive_model_data/Plots/Position_Component_Trend.pdf`
+
+9. **`Plotter_colorbar.py`**
    - Generates standalone colorbars used for figure assembly
 
 ---
 
 ## 10) LaTeX Conversion (Python)
-**`LatexConv_table_HyperP_ModelP.py`**  
-Generates plain text from model performance and optimized hyperparameters for direct copy-paste into Overleaf/LaTeX.
+
+1. **`LatexConv_table_PredModel_SI.py`**
+   - Generates the full set of Supplementary Information LaTeX tables for the predictive-modeling results: XGBoost grouped-CV performance, robustness (Iter 0 → Iter 1, 5 seeds), latency benchmark, model-class comparison, and position-sensitivity  
+   - **Inputs:** `Predictive_model_data/Grouped_Nested_CV_XGB/`, `Predictive_model_data/Iter0_Iter1_Robustness_XGB/`, `Predictive_model_data/Latency_Benchmark/`, `Predictive_model_data/Grouped_CV_Simple_Models/` (sections [8.2–8.5](#8-predictive-model-python))
+   - **Outputs** written to `Predictive_model_data/Table/`:
+     - `XGBoost_CV_Performance_Table.tex`, `Robustness_Table.tex`, `Latency_Table.tex`, `Model_Comparison_Table.tex`, `Position_Sensitivity_Table.tex`
+
+2. **`StatsSum_Uncertainty_Table_to_Latex.py`**
+   - Builds the measurement-uncertainty LaTeX table (equipment specs, force/pressure mean and min–max range) for the main text and SI, in a full and a short variant  
+   - **Inputs:** `Post_processed_stats_summarized/L_D_True_Stats_Iter_*.csv`, `Pressure_True_Stats_Iter_*.csv`, plus optional `Post_processed_force_coefficient/Force_Coefficients_AoA_All.csv` and `Post_processed_stats_summarized/Baseline_Pressure_Self_Stats.csv` if present  
+   - **Outputs:**
+     - `Post_processed_stats_summarized/Uncertainty/Uncertainty_Table.tex`
+     - `Post_processed_stats_summarized/Uncertainty/Short_Uncertainty_Table_for_main.tex`
+   - **Note:** named with the `StatsSum_` prefix because it reads the same meta-summary CSVs as [Section 4](#4-statssum-python), but grouped here since its output is a LaTeX table, not a CSV
 
 ---
 
@@ -254,4 +295,20 @@ Generates plain text from model performance and optimized hyperparameters for di
   - Interpolated pressure: `Predictive_model_data/Interpolated_pressure_data/Pressure_True_Stats_Iter_1_Interpolated.csv`
 - **Polar plots:** `Polar_Plot/`  
 - **Experiment heatmaps:** `Post_processed_stats_summarized/Heatmaps_from_Experiment/`  
-- **LaTeX text/tables:** output from `LatexConv_table_HyperP_ModelP.py`
+- **Grouped nested CV (XGBoost):** `Predictive_model_data/Grouped_Nested_CV_XGB/`  
+- **Grouped CV (simple models):** `Predictive_model_data/Grouped_CV_Simple_Models/`  
+- **Iter0→Iter1 robustness (XGBoost):** `Predictive_model_data/Iter0_Iter1_Robustness_XGB/`  
+- **Latency benchmark:** `Predictive_model_data/Latency_Benchmark/`  
+- **Predictive-model plots/tables:** `Predictive_model_data/Plots/`, `Predictive_model_data/Table/`  
+- **Uncertainty tables:** `Post_processed_stats_summarized/Uncertainty/`  
+- **LaTeX text/tables:** output from `LatexConv_table_PredModel_SI.py` and `StatsSum_Uncertainty_Table_to_Latex.py`
+
+---
+
+## Appendix C. Archived Scripts
+Superseded by the grouped nested CV workflow in [Section 8](#8-predictive-model-python); moved to `Archive_script/` and kept for reference, not part of the active pipeline.
+
+- **`PredModel_ARCHIVE_Bayes_Optimization_HyperP_XGBoost_P_to_LD.py`** — original single train/test Bayesian-tuned XGBoost (no grouped/nested CV); 6-fold CV, 1000 iterations, 20 random initializations
+- **`PredModel_ARCHIVE_final_train_and_test.py`** — original final training/testing script paired with the above; trained on Iteration 0, tested on Iteration 1, with multiple fixed seeds for robustness
+- **`Plotter_ARCHIVE_heatmap_test_L_D_and_RMSE.py`** — predicted/actual/error heatmaps and overall RMSE summary heatmap for the original workflow
+- **`LatexConv_ARCHIVE_table_HyperP_ModelP.py`** — LaTeX/plain-text generator for the original workflow's model performance and optimized hyperparameters
