@@ -1,7 +1,7 @@
 # Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight
 Github code for paper: **Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight**
 
-Last modified (this README.md): `28 Jul 2026` by `Huanglun(Adam) Zhu`
+Last modified (this README.md): `11 Aug 2026` by `Huanglun(Adam) Zhu`
 
 ---
 
