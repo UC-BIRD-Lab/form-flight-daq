@@ -1,7 +1,31 @@
 # Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight
-Github code for paper: **Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight**
+**Communications Engineering**, Sept, 2026 — [Article](https://doi.org/10.1038/s44172-026-00790-6)
+
+Huanglun A. Zhu<sup>1*</sup>, Richard J. Bomphrey<sup>2</sup>, James R. Usherwood<sup>2</sup>,  Kevin P. T. Haughn<sup>3</sup>, Christina Harvey<sup>1</sup>
+
+<sup>1</sup>*Department of Mechanical and Aerospace Engineering, University of California, Davis, Davis, CA, USA*
+<sup>2</sup>*Department of Comparative Biomedical Sciences, Royal Veterinary College, University of London, Hatfield, UK.*  <sup>3</sup>*Department of Mechanical Engineering, Rose-Hulman Institute of Technology, Terre Haute, IN, USA.* 
+
+<sup>\*</sup>*Corresponding author: Huanglun A. Zhu — [Email](lszhu@ucdavis.edu)*
 
 ---
+
+## Abstract
+Many bird species fly in formation, reducing energy expenditure by exploiting the leader’s wake. Energy savings depend on precise follower positioning, updated from relative position or local flow cues. Prior work indicates that birds are sensitive to pressure-derived cues, which may allow followers to identify energy-efficient locations. We investigated whether a bio-inspired pressure-sensing scheme across the wingspan and nares region could predict aerodynamic efficiency and identify favorable following positions. In a wind-tunnel study of a single-leader-single-follower formation, we equipped a follower model with nares and spanwise pressure taps. Using mutual information theory and machine-learning models, we found that pressure and position inputs improved lift-to-drag prediction compared with position alone, and that the nares-inspired tap pair captured a substantial portion of the useful pressure information. These findings suggest that bio-inspired sensor placement can enhance aerodynamic sensing for improving efficiency and autonomy of formation-flying uncrewed aerial vehicles (UAVs).
+
+## Citation
+```bibtex
+@article{Zhu2026,
+  author   = {Zhu, Huanglun A. and Bomphrey, Richard J. and Usherwood, James R. and Haughn, Kevin P. T. and Harvey, Christina},
+  title    = {Nares-inspired pressure sensing enhances aerodynamic state perception for formation flight},
+  journal  = {Communications Engineering},
+  year     = {2026},
+  month    = sep,
+  doi      = {10.1038/s44172-026-00790-6},
+  url      = {https://doi.org/10.1038/s44172-026-00790-6},
+  issn     = {2731-3395}
+}
+```
 
 ## Overview
 This repository contains all scripts used in the paper for:
